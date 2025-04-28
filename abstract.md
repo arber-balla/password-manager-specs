@@ -1,6 +1,7 @@
 # Abstract Document Outline
 
 ## 1. Document Purpose
+
 The goal of this document is to capture all the essential properties, functionalities, constraints, and architectural decisions for the Password Manager project. This abstract serves as the foundational reference for the development and maintenance of the application, ensuring that all stakeholders have a unified understanding of the system’s design, behavior, and security posture.
 
 The document will cover:
@@ -14,7 +15,9 @@ The document will cover:
 By clearly defining these aspects, this document serves as the backbone of the project's development lifecycle, guiding decisions and ensuring alignment between all teams involved.
 
 ### Role in development
+
 This document drives development by:
+
 1. **Defining Clear Requirements:** It outlines the expected functionalities and behaviors of the application, serving as the source of truth for feature implementation.
 2. **Guiding Design and Architecture:** By specifying architecture decisions and technology choices, it ensures that the development follows a unified structure, reducing ambiguity and improving collaboration.
 3. **Ensuring Security Compliance:** It sets forth the security measures that must be implemented and adhered to, ensuring that all development efforts comply with best practices and regulatory standards.
@@ -22,24 +25,31 @@ This document drives development by:
 5. **Providing Testing and Validation Criteria:** The specifications described in this document will serve as a foundation for testing the system, including performance, security, and functional testing. Testers and developers can use it to verify that the implementation meets all requirements.
 
 ## 2. Application Overview
+
 ### 2.1. Vision and Scope
+
 The vision of this project is, for me as a student, to develop a secure, scalable, and user-friendly password manager that demonstrates professional software engineering practices and showcases advanced technical skills in real-world application development.
 
 **What I will do**:
+
 - Implement a fully functional password manager with a front-end and back-end.
 - Ensure strong security features and secure password storage.
-- Follow (in my best capabilites) industry-standard practices for code quality, version control, and documentation.
+- Follow (in my best capabilities) industry-standard practices for code quality, version control, and documentation.
 - Design an intuitive user interface and a robust API for seamless interaction between front-end and back-end.
 - Document all decisions, code, and architectures thoroughly to maintain clarity and traceability.
 
 **What I will not do**:
+
 - Implement mobile applications or multi-platform support (focus will be on web).
 - Use third-party authentication providers (e.g., Google/Facebook login); the focus will be on custom authentication mechanisms.
 - Add non-essential features (e.g., advanced settings, integrations with other tools) that do not align with core functionality.
 - Use low-level or outdated technologies that are not in line with modern best practices (e.g., jQuery, legacy authentication mechanisms).
 - Implement full-blown enterprise-grade security features (e.g., intrusion detection systems, complex cryptographic key management), though strong encryption and basic security best practices will be adhered to.
+
 ### 2.2. High-Level Features
+
 **Core user stories**:
+
 - **Register Account:**
   As a user, I want to create a secure account with a strong master password so that I can access my personal vault.
 
@@ -80,6 +90,7 @@ The vision of this project is, for me as a student, to develop a secure, scalabl
   As a user, I want to enable MFA so that my account access is protected by an additional layer of security.
 
 ## 3. Functional Requirements
+
 ## 3.1 User Management
 
 ### 3.1.1 Register
@@ -88,6 +99,7 @@ The vision of this project is, for me as a student, to develop a secure, scalabl
 Allow new users to create a secure account by choosing a strong master password and providing minimal required information.
 
 **Functional Behavior:**
+
 - Users provide:
   - Email address (required, unique).
   - Master password (required, minimum complexity enforced).
@@ -97,12 +109,14 @@ Allow new users to create a secure account by choosing a strong master password 
 - Terms of service and privacy policy acknowledgment checkbox mandatory.
 
 **Security Requirements:**
+
 - Password strength validation client-side and server-side.
 - Server applies rate limiting on registration attempts.
 - Confirmation tokens are cryptographically random and expire after a short period (e.g., 24 hours).
 - Email addresses are normalized and validated against known disposable email providers.
 
 **API Design:**
+
 - **POST /api/auth/register**
 - Request body contains email and hashed/encrypted password payload.
 - Server responds with 201 Created and sends a verification email.
@@ -113,18 +127,21 @@ Allow new users to create a secure account by choosing a strong master password 
 Authenticate users securely and establish a trusted session.
 
 **Functional Behavior:**
+
 - User submits email and master password.
 - Server authenticates using stored password hash comparison.
 - On success, server issues a secure, short-lived access token (e.g., JWT or session cookie).
 - Option to enable Multi-Factor Authentication (MFA) in future versions.
 
 **Security Requirements:**
+
 - Passwords compared using constant-time algorithms to prevent timing attacks.
 - Brute-force protection: account lockout or exponential backoff after several failed attempts.
 - Sessions expire after inactivity (short TTL for access tokens).
 - Refresh token mechanism (optional) for seamless session renewal.
 
 **API Design:**
+
 - **POST /api/auth/login**
 - Returns authentication token(s) upon success.
 
@@ -134,21 +151,25 @@ Authenticate users securely and establish a trusted session.
 Enable users to reset their password securely if forgotten, without compromising stored encrypted data.
 
 **Functional Behavior:**
+
 - Users request a password reset by entering their email.
 - Server generates a one-time, time-limited reset token and sends it via email.
 - Clicking the link allows the user to input a new master password.
 - Important: Changing the master password must either re-encrypt vault data or warn the user that previous data will be unrecoverable if client-side encryption cannot be reversed (zero-knowledge constraint).
 
 **Security Requirements:**
+
 - Reset tokens are cryptographically random and expire within minutes or hours.
 - No sensitive data is leaked in reset emails.
 - Ensure email ownership through confirmation before allowing password change.
 
 **API Design:**
+
 - **POST /api/auth/forgot-password** — Request password reset link.
 - **POST /api/auth/reset-password** — Reset password using valid token.
 
 **Edge Handling:**
+
 - Token reuse is forbidden.
 - Invalid or expired token responses must not disclose account existence to avoid user enumeration attacks.
 
@@ -158,6 +179,7 @@ Enable users to reset their password securely if forgotten, without compromising
 Implement a simple role-based access control (RBAC) system to define user and administrative capabilities.
 
 **Roles:**
+
 - **User:**
   - Full access to personal vaults.
   - No access to other users' data or system-wide operations.
@@ -167,24 +189,29 @@ Implement a simple role-based access control (RBAC) system to define user and ad
   - Does not have access to user vault contents (maintains zero-knowledge principle).
 
 **Permissions Enforcement:**
+
 - Backend enforces permissions on every sensitive route.
 - Admin-only routes protected through middleware or guards.
 
 **Security Requirements:**
+
 - Clear separation of user vs. admin operations at API and database levels.
 - Admin privilege escalation is forbidden without proper verification processes.
 - Regular review of user permissions to prevent privilege creep.
 
 **API Design Examples:**
+
 - **GET /api/admin/users** — Admin only.
 - **PATCH /api/admin/user/:id/deactivate** — Admin only.
 - **GET /api/vault** — User authenticated access.
 
 ### 3.1.5 General Security Measures Across User Management
+
 - All personal information is encrypted in-transit (HTTPS) and sensitive identifiers are tokenized or anonymized where possible.
 - Server logs redact sensitive fields to prevent leakage of credentials or personal data.
 - Input validation and sanitization on all forms and endpoints.
 - Detailed audit logging for registration, login, and password reset events.
+
 ## 3.2 Vault Operations
 
 ### 3.2.1 Create Vault Entry
@@ -193,6 +220,7 @@ Implement a simple role-based access control (RBAC) system to define user and ad
 Allow authenticated users to securely create and store a new vault entry containing login credentials or secure notes.
 
 **Functional Behavior:**
+
 - Users provide:
   - Title (required).
   - Username (optional).
@@ -204,11 +232,13 @@ Allow authenticated users to securely create and store a new vault entry contain
 - Newly created entries are linked to the authenticated user account.
 
 **Security Requirements:**
+
 - All sensitive fields encrypted client-side using a key derived from the master password.
 - HTTPS enforced for all communication.
 - Server only stores encrypted payloads; no plaintext.
 
 **API Design:**
+
 - **POST /api/vault/entries**
 - Authenticated endpoint.
 - Returns 201 Created upon success.
@@ -219,6 +249,7 @@ Allow authenticated users to securely create and store a new vault entry contain
 Allow authenticated users to securely retrieve their stored vault entries.
 
 **Functional Behavior:**
+
 - Users can retrieve:
   - All vault entries.
   - Entries filtered by folder, tag, or keyword search.
@@ -226,10 +257,12 @@ Allow authenticated users to securely retrieve their stored vault entries.
 - Support pagination for large vaults.
 
 **Security Requirements:**
+
 - Server responds with encrypted entries only.
 - Sensitive metadata minimized in server responses.
 
 **API Design:**
+
 - **GET /api/vault/entries** — List all entries.
 - **GET /api/vault/entries?folder=folder_id** — Filter by folder.
 - **GET /api/vault/entries?tag=tag_name** — Filter by tag.
@@ -240,6 +273,7 @@ Allow authenticated users to securely retrieve their stored vault entries.
 Allow authenticated users to securely update fields of an existing vault entry.
 
 **Functional Behavior:**
+
 - Users can update:
   - Title
   - Username
@@ -251,10 +285,12 @@ Allow authenticated users to securely update fields of an existing vault entry.
 - Old record replaced atomically with new encrypted record.
 
 **Security Requirements:**
+
 - Access control ensures only the owner can update their entries.
 - Conflict handling if two clients attempt to update simultaneously (optimistic locking or timestamps).
 
 **API Design:**
+
 - **PATCH /api/vault/entries/:entry_id**
 - Authenticated endpoint.
 
@@ -264,14 +300,17 @@ Allow authenticated users to securely update fields of an existing vault entry.
 Allow authenticated users to permanently delete a vault entry.
 
 **Functional Behavior:**
+
 - Users confirm deletion.
 - Record is hard-deleted or soft-deleted based on implementation choice (prefer soft-deletion for auditability).
 
 **Security Requirements:**
+
 - Verify ownership before deletion.
 - Encrypted audit log entry created if necessary (e.g., "user X deleted entry Y at time Z").
 
 **API Design:**
+
 - **DELETE /api/vault/entries/:entry_id**
 - Authenticated endpoint.
 
@@ -281,6 +320,7 @@ Allow authenticated users to permanently delete a vault entry.
 Enable users to group entries into folders for better management.
 
 **Functional Behavior:**
+
 - Users create folders with:
   - Folder name (required, unique per user).
 - Entries can be assigned to folders at creation or updated later.
@@ -288,10 +328,12 @@ Enable users to group entries into folders for better management.
 - Deleting a folder should either delete contained entries (with confirmation) or unassign them.
 
 **Security Requirements:**
+
 - Folder names encrypted if required to maintain zero-knowledge principles.
 - Folder structure retrieved securely without leaking user metadata.
 
 **API Design:**
+
 - **POST /api/vault/folders** — Create folder.
 - **PATCH /api/vault/folders/:folder_id** — Rename folder.
 - **DELETE /api/vault/folders/:folder_id** — Delete folder.
@@ -302,16 +344,19 @@ Enable users to group entries into folders for better management.
 Allow users to assign multiple tags to vault entries for flexible classification.
 
 **Functional Behavior:**
+
 - Tags are arbitrary text labels users attach to entries.
 - Entries can have multiple tags.
 - Users can create, edit, and delete tags.
 - Tags support search and filtering of entries.
 
 **Security Requirements:**
+
 - Tags associated only with entries owned by the user.
 - Optionally encrypt tag names if high confidentiality required.
 
 **API Design:**
+
 - **POST /api/vault/tags** — Create tag.
 - **PATCH /api/vault/tags/:tag_id** — Rename tag.
 - **DELETE /api/vault/tags/:tag_id** — Delete tag.
@@ -322,6 +367,7 @@ Allow users to assign multiple tags to vault entries for flexible classification
 - Minimal metadata exposure in API responses (e.g., timestamps, encrypted titles).
 - No plaintext vault data handled server-side at any point.
 - Consistent logging of vault operations without recording sensitive field contents.
+
 ## 3.3 Encryption/Decryption
 
 ### 3.3.1 Client-Side AES-256-GCM Usage
@@ -330,6 +376,7 @@ Allow users to assign multiple tags to vault entries for flexible classification
 Ensure that all sensitive user data is encrypted on the client before transmission and storage, providing confidentiality even in case of server breach.
 
 **Functional Behavior:**
+
 - Data encryption occurs within the user's device (browser or app).
 - AES-256-GCM algorithm is used:
   - 256-bit key length.
@@ -342,11 +389,13 @@ Ensure that all sensitive user data is encrypted on the client before transmissi
 - Nonce is unique per encryption operation and stored alongside ciphertext.
 
 **Implementation Details:**
+
 - Use cryptographic libraries with strong guarantees and vetted security (e.g., WebCrypto API, libsodium.js).
 - Secure random generator (e.g., crypto.getRandomValues()) for IV generation.
 - Combine IV + ciphertext + tag for transmission and storage.
 
 **Security Requirements:**
+
 - Never reuse IVs with the same key.
 - Perform integrity verification during decryption by validating GCM authentication tag.
 - Discard corrupted entries if integrity validation fails.
@@ -357,6 +406,7 @@ Ensure that all sensitive user data is encrypted on the client before transmissi
 Derive strong encryption keys from the user's master password in a way that resists brute-force and side-channel attacks.
 
 **Functional Behavior:**
+
 - Argon2id used as the Key Derivation Function (KDF):
   - Combines Argon2i's resistance to side-channel attacks with Argon2d's brute-force hardness.
 - Parameters (recommended starting point, tuned per device capabilities):
@@ -371,11 +421,13 @@ Derive strong encryption keys from the user's master password in a way that resi
   - Optionally: a separate key for HMACs (if needed for additional message authentication).
 
 **Implementation Details:**
+
 - Key derivation happens entirely client-side.
 - Master password never leaves the client device.
 - Argon2 library must be hardened against timing attacks and side-channel leaks.
 
 **Security Requirements:**
+
 - Salts must be unique and random per user.
 - Re-keying required if KDF parameters are upgraded later (prompt user to rederive key).
 
@@ -385,24 +437,29 @@ Derive strong encryption keys from the user's master password in a way that resi
 Architect the system to ensure that the server is incapable of reading any user vault contents, even with full access to stored data.
 
 **Principles:**
+
 - All sensitive user content is encrypted on the client.
 - The server only sees and stores ciphertexts, IVs, authentication tags, and public metadata (e.g., registration timestamps).
 - Passwords, derived keys, and decrypted content are never transmitted or stored server-side.
 - Admins have zero ability to decrypt user vaults.
 
 **Security Design Features:**
+
 - Authentication tokens (e.g., JWTs) do not grant decryption ability, only access control.
 - Loss of the master password results in irreversible data loss (unless explicit backup/recovery mechanisms are implemented client-side).
 - Password reset flows must clearly warn users that resetting the master password without decrypting old vault data will render previous entries inaccessible.
 
 **Constraints:**
+
 - Certain minimal metadata (e.g., entry creation timestamps, folder structures if not encrypted) may remain exposed unless full database encryption is applied.
 - Future features (e.g., vault sharing) must be designed carefully to preserve zero-knowledge by encrypting shared content separately.
 
 **Security Requirements:**
+
 - Full cryptographic audits for encryption libraries and methods used.
 - Strong segregation of encrypted user data and authentication/identity management components.
 - Periodic revalidation of zero-knowledge properties during system upgrades or changes.
+
 ## 3.5 Audit & Logging
 
 ### 3.5.1 Purpose
@@ -414,22 +471,26 @@ Establish a verifiable and tamper-resistant trail of critical user and system ac
 ### 3.5.2 Scope of Logged Events
 
 **Login Events:**
+
 - Successful login.
 - Failed login attempts (invalid password, invalid credentials).
 - Two-factor authentication challenges and results (if implemented).
 
 **CRUD Operations on Vault Entries:**
+
 - Creation of a new vault entry.
 - Reading (fetching) a vault entry (logged only as an access event without revealing which entry was accessed).
 - Updating an existing vault entry.
 - Deleting a vault entry.
 
 **Sharing Actions:**
+
 - Initiating vault sharing with another user.
 - Accepting or rejecting a shared vault entry.
 - Revoking access to shared entries.
 
 **Administrative Actions (if admin role exists):**
+
 - User account deactivation or deletion.
 - Password reset request handling.
 - Role changes or escalations.
@@ -446,7 +507,7 @@ Establish a verifiable and tamper-resistant trail of critical user and system ac
 - **Resource ID:** (only if applicable) Encrypted entry or folder ID involved.
 - **Status Code:** Success or failure indicator (plus error reason if applicable).
 
-*Note:* Never log any sensitive plaintext vault data, user passwords, or encryption keys.
+_Note:_ Never log any sensitive plaintext vault data, user passwords, or encryption keys.
 
 ---
 
@@ -483,34 +544,41 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.1.1 OWASP Top 10 Mitigations
 
 **A01 - Broken Access Control**
+
 - Enforce strict server-side authorization for every request.
 - Role-based access control (RBAC) system (user, admin).
 - Deny by default: every resource access must be explicitly granted.
 
 **A02 - Cryptographic Failures**
+
 - Encrypt all sensitive data client-side before transmission.
 - Use industry-standard cryptography (AES-256-GCM, Argon2id) with vetted libraries.
 - Implement strong random key material and IV generation.
 
 **A03 - Injection**
+
 - Sanitize all user inputs (vault entry names, notes) even if encrypted.
 - Use parameterized queries on the server to prevent SQL injection.
 - Escape outputs correctly in the front-end.
 
 **A04 - Insecure Design**
+
 - Explicit zero-knowledge architecture: server cannot decrypt user vaults.
 - Threat modeling documented and reviewed per major release.
 
 **A05 - Security Misconfiguration**
+
 - Minimal server permissions; deny unused services and ports.
 - Secure HTTP headers (CSP, HSTS, X-Content-Type-Options, etc.).
 - Default to secure settings; no debug modes in production.
 
 **A06 - Vulnerable and Outdated Components**
+
 - Regular dependency audits with tools (e.g., npm audit, Snyk).
 - Patch management process for back-end and front-end libraries.
 
 **A07 - Identification and Authentication Failures**
+
 - Secure password handling:
   - Argon2id for password hashing.
   - MFA (optional but recommended) at login.
@@ -518,14 +586,17 @@ Some of the more advanced features outlined in this document, such as horizontal
 - Session expiration and revocation capabilities.
 
 **A08 - Software and Data Integrity Failures**
+
 - Front-end bundle integrity verification (e.g., Subresource Integrity, SRI).
 - Digital signatures on updates if distributed outside standard web platform.
 
 **A09 - Security Logging and Monitoring Failures**
+
 - Comprehensive audit logging (login, CRUD actions, sharing) as per 3.5.
 - Anomaly detection integration (future scope).
 
 **A10 - Server-Side Request Forgery (SSRF)**
+
 - No server-side retrieval of external URLs without strict whitelisting (future-proofing).
 
 ---
@@ -533,11 +604,13 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.1.2 Data-at-Rest Encryption
 
 **Server-Side:**
+
 - Even though vault contents are encrypted client-side, server will encrypt stored blobs again using volume/database encryption (e.g., AES-256 at database layer).
 - Database credentials stored securely, outside codebase (environment variables, vault services).
 - Backup storage encrypted to the same standards as primary data.
 
 **Client-Side:**
+
 - All vault data encrypted on the device before transmission.
 - Persistent storage (localStorage, IndexedDB) uses encrypted forms only if offline access is implemented.
 
@@ -559,24 +632,29 @@ Some of the more advanced features outlined in this document, such as horizontal
 - X-Frame-Options set to DENY to prevent clickjacking.
 - Rate-limiting on authentication endpoints to deter brute-force attacks.
 - CAPTCHA integration after multiple failed login attempts (optional for higher security).
+
 ## 4.2 Performance
 
 ### 4.2.1 Target Latency for Vault Read/Write
 
 **Read Operations:**
+
 - Decrypting and rendering a vault entry after user action (e.g., opening the vault dashboard) must occur in under **200ms** for 95th percentile of cases.
 - Full vault synchronization (pulling all metadata and required encrypted objects) must complete in under **2 seconds** for vaults with up to **1000 entries**.
 
 **Write Operations:**
+
 - Creating, updating, or deleting a vault entry must achieve confirmation (including server acknowledgment) in under **300ms** in normal network conditions.
 - Vault sync state after write must be consistent and available within **500ms** maximum.
 
 **Encryption Overhead:**
+
 - Client-side encryption/decryption operations must not introduce perceivable lag:
   - Single entry encrypt/decrypt under **50ms** on a typical user device (mid-range smartphone or laptop).
   - Argon2id password-derived key generation at login acceptable within **1–2 seconds**.
 
 **Network Conditions Assumed:**
+
 - Latency benchmarks based on typical broadband or 4G+ network conditions (~50–100ms RTT).
 - Application must degrade gracefully on higher-latency networks (e.g., visual loading indicators, background sync).
 
@@ -585,20 +663,24 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.2.2 Concurrency Requirements
 
 **User Concurrency:**
+
 - Back-end API must be able to handle a minimum of **1000 concurrent authenticated sessions** without significant degradation in response time.
 - Horizontal scaling architecture (stateless back-end services where possible) to allow future scaling to **10,000+ concurrent users**.
 
 **Per-User Operations:**
+
 - Support multiple concurrent sessions per user (e.g., logged in simultaneously on desktop and mobile).
 - Vault sync mechanism must resolve conflicts safely:
   - Last-write-wins strategy for simple overwrites.
   - Future implementation scope: full operational transformation (OT) or conflict-free replicated data types (CRDTs) for real-time collaboration features.
 
 **Server Load Management:**
+
 - Use connection pooling and async I/O on the back-end to maximize throughput (e.g., Node.js event loop efficiency, Postgres connection pooling).
 - Rate limit non-critical API calls to prevent abuse or accidental overload.
 
 **Resource Constraints:**
+
 - Vault data structures optimized for low memory and CPU usage on client devices.
 - Server queries and storage access designed to avoid N+1 problems and unnecessary full scans.
 
@@ -612,37 +694,45 @@ Some of the more advanced features outlined in this document, such as horizontal
   - Vault synchronization durations.
   - Encryption/decryption processing times.
 - Use this data to continuously optimize system bottlenecks before major releases.
+
 ## 4.3 Scalability
 
 ### 4.3.1 Horizontal Scaling Strategy
 
 **Application Layer:**
+
 - Design back-end services to be stateless, allowing replication across multiple instances.
 - Deploy application servers behind a load balancer (e.g., AWS ELB, NGINX) to distribute incoming API requests evenly.
 - Auto-scaling groups configured to dynamically adjust the number of application instances based on CPU, memory usage, or request throughput thresholds.
 
 **Database Layer:**
+
 - Use a relational database (e.g., PostgreSQL) with vertical scaling initially (scale-up).
 - Plan for read replicas to distribute read-heavy traffic (eventually consistent reads acceptable for non-critical operations like dashboard vault listings).
 - Connection pooling middleware (e.g., PgBouncer) to optimize database concurrency under load.
 - Future scope: investigate sharding strategies (by user ID range) when the primary database approaches performance limits.
 
 **Object Storage:**
+
 - Store encrypted vault blobs (if separated from database records) in scalable object storage (e.g., AWS S3, Azure Blob Storage) with redundant, distributed architecture.
 - Implement Content Delivery Network (CDN) caching layers if vault metadata or assets become sufficiently large or frequently accessed.
 
 **Caching Layer:**
+
 - Introduce an in-memory cache (e.g., Redis, Memcached) for:
   - Session/token management.
   - Frequently accessed non-sensitive metadata (e.g., folder structures, sharing relationships).
 - Cache invalidation policies must ensure consistency after CRUD operations.
 
 **Front-End Delivery:**
+
 - Front-end built assets hosted on a global CDN for low-latency delivery worldwide.
 - Versioned front-end deployments to ensure cache busting and smooth rollouts.
 
 **Scaling for Background Jobs:**
+
 - Use distributed queue systems (e.g., RabbitMQ, Redis Streams) for non-immediate processing tasks:
+
   - Audit log writing.
   - Notification sending.
   - Sharing acceptance processing.
@@ -650,31 +740,38 @@ Some of the more advanced features outlined in this document, such as horizontal
 - Scale worker pools independently from API servers according to job queue backlog.
 
 **Monitoring and Auto-healing:**
+
 - Health checks configured at the load balancer level.
 - Automatic replacement of unhealthy instances without human intervention.
 - Alerting systems in place to detect load anomalies and trigger scaling events before saturation.
 
 **Data Partitioning Considerations (Future Scope):**
+
 - If single-database writes become a bottleneck, partition user vaults logically (e.g., by user ID modulo N across database clusters).
 - Maintain a global index service to map user IDs to the correct partition.
 
 ---
+
 ## 4.4 Availability & Reliability
 
 ### 4.4.1 SLA Targets
 
 **Service Availability:**
+
 - Target service uptime of **99.9%** annually (excluding scheduled maintenance).
   - This equates to no more than **8.77 hours** of downtime per year or approximately **43 minutes** of downtime per month.
 
 **API Response Time:**
+
 - **99% of all API requests** should respond in **under 200ms** for read operations and **under 300ms** for write operations.
 - Critical operations (e.g., login, vault access) should have response times under **100ms** for **95% of users**.
 
 **Database Availability:**
+
 - Aim for **99.99%** database availability, with replication and failover mechanisms ensuring minimal downtime in case of failure.
 
 **Disaster Recovery & Failover:**
+
 - All critical services (e.g., web servers, database servers) should have failover capabilities configured to automatically route traffic to healthy instances or regions without user interruption.
 
 ---
@@ -682,16 +779,20 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.4.2 Backup and Disaster Recovery
 
 **Backup Strategy:**
+
 - **Database Backups:**
+
   - Perform **daily full backups** of all production databases.
   - **Hourly incremental backups** of critical vault data (to minimize data loss in case of failure).
   - Backups stored offsite in a geographically redundant region (e.g., AWS S3 with versioning enabled or a secondary data center).
 
 - **Application Backups:**
+
   - Regularly backup application configuration and critical settings (e.g., user roles, permissions).
   - Store backups encrypted at rest with robust key management practices.
 
 - **Backup Retention:**
+
   - Retain daily backups for **30 days**.
   - Retain weekly backups for **90 days**.
   - Retain monthly backups for **1 year**.
@@ -703,15 +804,18 @@ Some of the more advanced features outlined in this document, such as horizontal
 ---
 
 **Disaster Recovery Plan:**
+
 - **RTO (Recovery Time Objective):** Target **2 hours** to fully restore service in the event of a critical failure or disaster.
 - **RPO (Recovery Point Objective):** Ensure that the maximum data loss is **less than 1 hour** by having backups taken at least every hour.
 
 **High-Availability (HA) Architecture:**
+
 - Deploy applications across **multiple availability zones** or data centers to ensure service continuity during zone failures.
 - Set up **automatic failover** between active and passive instances in case of primary system failure (e.g., for databases, load balancers).
 - Use **geo-redundant** deployments for critical systems (e.g., database replicas, application services) to provide failover across regions.
 
 **Incident Response:**
+
 - Establish an incident response team for fast identification and mitigation of service failures.
 - Incident reports and resolution timelines must be documented for internal review.
 - Users should be notified about outages with clear explanations and expected timelines for resolution.
@@ -723,13 +827,16 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.5.1 Code Standards
 
 **Consistency:**
+
 - Adhere to established coding standards for all languages and frameworks used (e.g., JavaScript, TypeScript, Node.js, etc.).
 - Utilize industry best practices for clean, modular, and scalable code:
   - Use **SOLID** principles for object-oriented design.
   - Follow **DRY (Don't Repeat Yourself)** and **KISS (Keep It Simple, Stupid)** principles.
 
 **Code Style:**
+
 - Use consistent naming conventions across all files, variables, and functions:
+
   - **camelCase** for variables, functions, and method names.
   - **PascalCase** for classes and components.
   - **UPPER_CASE** for constants and environment variables.
@@ -738,10 +845,12 @@ Some of the more advanced features outlined in this document, such as horizontal
   - Configurations should be set up for both front-end and back-end development to ensure code quality is maintained across the project.
 
 **Modular Code:**
+
 - Split functionality into clear, well-defined modules. This allows for easier testing, maintenance, and updates.
 - Apply proper separation of concerns (e.g., separate services, utilities, models, and controllers).
 
 **Error Handling:**
+
 - Implement consistent and clear error handling throughout the application:
   - Use **try-catch** blocks where appropriate in asynchronous code.
   - Implement proper error messages with meaningful error codes.
@@ -752,7 +861,9 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.5.2 Documentation
 
 **Code Documentation:**
+
 - Every public function, method, and class must be documented with meaningful comments describing:
+
   - The function's purpose.
   - Expected inputs and outputs (parameters and return types).
   - Side effects, if any.
@@ -772,13 +883,16 @@ Some of the more advanced features outlined in this document, such as horizontal
     ```
 
 **Project Documentation:**
+
 - Provide detailed documentation for the project setup, deployment, and architecture:
+
   - Include information on setting up the development environment, building the project, and running tests.
   - High-level overviews of system components, their interactions, and the underlying architecture.
 
 - Store **README.md** files in each module or service directory to provide specific instructions for those components.
 
 **User Documentation:**
+
 - A user manual should be created to guide end-users on how to use the password manager, explaining features like vault creation, password generation, and sharing.
 
 ---
@@ -786,36 +900,43 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.5.3 Automated Checks
 
 **Linting and Formatting:**
+
 - Integrate **ESLint** and **Prettier** into the build pipeline to enforce code quality standards.
   - Linting should cover both JavaScript/TypeScript code and configuration files (e.g., JSON, YAML).
   - Prettier should automatically format code to ensure consistency across the project.
 
 **Unit Testing:**
+
 - Set up automated unit testing using a framework like **Jest** or **Mocha** (for JavaScript/TypeScript) or **Cucumber** for behavior-driven development.
   - Aim for a minimum of **80% test coverage** across all critical modules.
   - Ensure that tests are easily run using commands like `npm run test`.
 
 **Integration Testing:**
+
 - Integration tests should be in place to verify that different parts of the system work together as expected:
   - **API testing** to ensure that routes, authentication, and database interactions are working.
   - Use tools like **Supertest** or **Postman** for automated API testing.
 
 **Continuous Integration (CI):**
+
 - Implement a CI pipeline with a platform like **GitHub Actions**, **Travis CI**, or **CircleCI** to automate:
   - Code linting and formatting checks.
   - Unit and integration testing on every pull request.
   - Deployment pipeline for staging and production.
 
 **Continuous Deployment (CD):**
+
 - Automate deployment processes with a **CD pipeline** that deploys code to staging and production environments:
   - Implement automatic deployments upon merging code into main branches.
   - Ensure successful build and tests before deployment to production.
 
 **Code Coverage Reports:**
+
 - Use coverage tools like **Istanbul** (via Jest) or **nyc** to generate code coverage reports.
   - Coverage reports should be generated automatically and accessible for review after each test run.
 
 **Static Analysis Tools:**
+
 - Use static analysis tools (e.g., **SonarQube**, **CodeClimate**) to analyze code quality and identify areas for improvement, like unused code, potential bugs, or security vulnerabilities.
 
 ---
@@ -823,6 +944,7 @@ Some of the more advanced features outlined in this document, such as horizontal
 ### 4.5.4 Version Control & Branching Strategy
 
 **Git Flow:**
+
 - Use **Git Flow** or a similar branching strategy:
   - **Main branch** holds production-ready code.
   - **Develop branch** is for ongoing development and integration.
@@ -830,6 +952,7 @@ Some of the more advanced features outlined in this document, such as horizontal
   - **Release branches** for preparing and stabilizing production releases.
 
 **Commit Messages:**
+
 - Follow a standardized format for commit messages (e.g., **Conventional Commits**):
   - `feat:` for new features.
   - `fix:` for bug fixes.
@@ -839,12 +962,14 @@ Some of the more advanced features outlined in this document, such as horizontal
   - `test:` for adding or updating tests.
 
 **Pull Requests (PRs):**
+
 - All code changes must go through a PR process where:
   - Code is reviewed by at least one other team member.
   - The PR description clearly explains the purpose of the changes.
   - The code is thoroughly tested, with proper test coverage.
 
 **Release Notes:**
+
 - Keep a **CHANGELOG.md** to track new features, fixes, and breaking changes across releases.
 
 ---
@@ -858,6 +983,7 @@ In the System Architecture section, we will outline the high-level structure of 
 The **Component Diagram** provides an overview of the application's main components and their interactions. Below is a description of each major component within the architecture:
 
 ### 1. **Front-End (Client-Side Application)**
+
 The front-end application is responsible for the user interface and the overall user experience. It is typically built using **React** or **Vue.js** and communicates with the back-end API to send and receive data. The front-end ensures secure handling of user inputs, such as login credentials and vault data, and presents them in a user-friendly manner.
 
 - **Key Responsibilities**:
@@ -868,6 +994,7 @@ The front-end application is responsible for the user interface and the overall 
 ---
 
 ### 2. **API Layer (Back-End)**
+
 The back-end API layer handles client requests and processes them in line with business logic. It ensures that all operations, such as authentication, CRUD operations on the vault, and user management, are secure, efficient, and accurate.
 
 - **Key Responsibilities**:
@@ -878,6 +1005,7 @@ The back-end API layer handles client requests and processes them in line with b
 ---
 
 ### 3. **Database**
+
 The database stores user data, vault entries, and metadata. A relational database such as **PostgreSQL** is used to store structured data, ensuring data integrity and consistency. Data such as user credentials, vault metadata (e.g., folder names, tags), and sharing information are stored here.
 
 - **Key Responsibilities**:
@@ -888,6 +1016,7 @@ The database stores user data, vault entries, and metadata. A relational databas
 ---
 
 ### 4. **Key-Management System (KMS)**
+
 The KMS is responsible for securely managing the encryption keys used to protect sensitive user data. In the application, encryption keys are critical for maintaining data confidentiality. A KMS may be implemented either as a custom solution or with a third-party service (e.g., AWS KMS, Azure Key Vault).
 
 - **Key Responsibilities**:
@@ -898,6 +1027,7 @@ The KMS is responsible for securely managing the encryption keys used to protect
 ---
 
 ### 5. **Hardware Security Module (HSM) / Vault**
+
 A **Hardware Security Module (HSM)** or **Vault** is a physical or cloud-based service that securely stores encryption keys. HSMs provide additional protection by ensuring that keys are never exposed to unauthorized access. If integrated, an HSM would add an extra layer of security for managing sensitive encryption operations and key storage.
 
 - **Key Responsibilities**:
@@ -908,6 +1038,7 @@ A **Hardware Security Module (HSM)** or **Vault** is a physical or cloud-based s
 ---
 
 ### Component Interaction:
+
 - The **Front-End** communicates with the **API Layer** over HTTPS, using authentication tokens (e.g., JWT) to ensure secure communication.
 - The **API Layer** handles business logic, authenticating users and performing operations on data, like adding, editing, or deleting vault entries.
 - The **API Layer** interacts with the **Database** to store user data and encrypted vault entries.
@@ -923,6 +1054,7 @@ This modular architecture ensures that sensitive data remains secure at all stag
 The **Data Flow** section outlines the sequence of operations performed by the application when a user interacts with it. This section focuses on the key operations related to user authentication and secure vault data handling, from login through to vault entry decryption. Below is a step-by-step breakdown of the typical data flow in the system.
 
 ### 1. **Login**
+
 - The user enters their credentials (username/email and password) on the front-end login page.
 - The front-end sends an HTTP POST request to the back-end API with the user’s credentials over a secure HTTPS connection.
 - The API verifies the credentials by checking the user’s stored, hashed password in the database.
@@ -932,6 +1064,7 @@ The **Data Flow** section outlines the sequence of operations performed by the a
 ---
 
 ### 2. **Key Derivation**
+
 - After successful login, the front-end sends a request to the back-end to access the user’s vault.
 - The back-end retrieves the user’s **salt** from the database (associated with their account) and uses it along with the user’s password to perform **key derivation**.
   - **Key Derivation Function (KDF)**: **Argon2** is used to securely derive a key from the user’s password and salt. This ensures that even if two users have the same password, the resulting keys will be unique due to the use of different salts.
@@ -940,6 +1073,7 @@ The **Data Flow** section outlines the sequence of operations performed by the a
 ---
 
 ### 3. **Vault Fetch**
+
 - Once the key is derived, the back-end uses it to decrypt the **master key** and then fetch the encrypted vault entries from the database.
 - The vault entries are encrypted with **AES-256-GCM** encryption. The back-end fetches the corresponding encrypted data from the database and prepares it for decryption.
 - The back-end sends the encrypted vault entries to the front-end in response to the request. The data remains encrypted during transmission.
@@ -947,6 +1081,7 @@ The **Data Flow** section outlines the sequence of operations performed by the a
 ---
 
 ### 4. **Decryption**
+
 - The front-end receives the encrypted vault data from the back-end and begins the decryption process.
 - The **master key**, which was derived using Argon2 and fetched from the back-end, is used to decrypt the vault entries. This decryption happens client-side to ensure that the application never exposes sensitive data in plaintext to the server.
   - **AES-256-GCM** is used for the decryption process to ensure that the vault data remains protected.
@@ -956,6 +1091,7 @@ The **Data Flow** section outlines the sequence of operations performed by the a
 ---
 
 ### Summary of the Data Flow:
+
 1. **Login**: User submits credentials → API verifies credentials → JWT/session token returned.
 2. **Key Derivation**: User password + salt → Argon2 KDF → Derived key used for decrypting master key.
 3. **Vault Fetch**: API fetches encrypted vault data from the database → Sends encrypted data to front-end.
@@ -970,8 +1106,10 @@ This secure, client-side decryption flow ensures that the application remains ze
 The **Deployment Topology** outlines the infrastructure setup and deployment strategy for the password manager application. This section details how the application will be deployed in different environments (e.g., development, staging, production) using containerization and orchestration tools like **Docker**, **Amazon ECS (Elastic Container Service)**, and **Kubernetes**.
 
 ### 1. **Docker**
+
 - **Docker** is used for containerizing the application components, ensuring consistency across different environments and simplifying the deployment process.
 - Each major component of the application (front-end, back-end, database, key-management system) will be containerized into separate Docker images.
+
   - **Front-End**: A container running the front-end React/Vue application.
   - **Back-End**: A container running the Node.js/Express or other back-end server.
   - **Database**: A container running a relational database (e.g., PostgreSQL or MySQL).
@@ -982,8 +1120,10 @@ The **Deployment Topology** outlines the infrastructure setup and deployment str
 ---
 
 ### 2. **Amazon ECS (Elastic Container Service)**
+
 - In production, the application will be deployed using **Amazon ECS**, which automates the deployment, scaling, and management of Docker containers on AWS.
 - **ECS Cluster**: The ECS cluster will consist of multiple EC2 instances (or Fargate tasks, if using serverless) where the application containers will be deployed.
+
   - **Tasks**: Each component of the application (front-end, back-end, database) will run in its own ECS task.
   - **Task Definitions**: Task definitions define the containers’ configurations, including the Docker image, environment variables, resource allocation (CPU, memory), and networking settings.
 
@@ -994,8 +1134,10 @@ The **Deployment Topology** outlines the infrastructure setup and deployment str
 ---
 
 ### 3. **Kubernetes**
+
 - As the application grows, **Kubernetes** can be used for container orchestration across multiple cloud environments or on-premise clusters.
 - **Kubernetes Cluster**: The application components (front-end, back-end, database, etc.) will be deployed as **Pods** in a **Kubernetes Cluster**.
+
   - Each component will be managed by its own **Deployment**, ensuring that replicas are maintained for high availability.
   - **Services** will be defined to expose each component (e.g., front-end service, back-end API service) and enable communication between them.
 
@@ -1006,13 +1148,16 @@ The **Deployment Topology** outlines the infrastructure setup and deployment str
 ---
 
 ### 4. **Environments**
+
 - The deployment topology will support multiple environments, each tailored to different stages of the development lifecycle (e.g., development, staging, production).
 
   - **Development Environment**:
+
     - Locally using Docker Compose for fast iteration and testing.
     - Containerized services are orchestrated manually or via Docker Compose.
 
   - **Staging Environment**:
+
     - Hosted on ECS or Kubernetes, reflecting the production environment closely.
     - Used for testing in a production-like setup, including continuous integration/continuous deployment (CI/CD) pipelines.
 
@@ -1023,6 +1168,7 @@ The **Deployment Topology** outlines the infrastructure setup and deployment str
 ---
 
 ### 5. **CI/CD Pipeline**
+
 - The deployment process will be automated with a **CI/CD pipeline** that handles:
   - **Code Integration**: Code from the repository is automatically built, tested, and packaged into Docker containers.
   - **Continuous Delivery**: Once tested, the Docker images are pushed to a container registry (e.g., Docker Hub, Amazon ECR).
@@ -1032,6 +1178,7 @@ The **Deployment Topology** outlines the infrastructure setup and deployment str
 ---
 
 ### Summary of Deployment Topology:
+
 1. **Docker**: Containerizes all components for local and production environments.
 2. **Amazon ECS**: Orchestrates containers on EC2 instances or using serverless Fargate for scalable, managed deployments.
 3. **Kubernetes**: Used for advanced orchestration with auto-scaling and high availability, for future scaling needs.
@@ -1042,6 +1189,7 @@ By using Docker, ECS, and Kubernetes, the application can be efficiently managed
 ---
 
 ## 6. Data Model
+
 The **Data Model** defines the structure and relationships between the various entities within the password manager application. The data model will ensure the secure and efficient storage and retrieval of sensitive information, including user accounts, vault entries, encryption keys, and audit logs. This section details the database schema, entity relationships, and key design decisions.
 
 ### 6.1 Entities
@@ -1051,8 +1199,10 @@ The following entities are the core components of the password manager system. E
 ---
 
 #### **User**
+
 - **Purpose**: Represents a person who uses the password manager application.
 - **Attributes**:
+
   - **id**: Unique identifier for each user (auto-incremented).
   - **email**: The user’s email address, used for login.
   - **hashed_password**: The securely hashed password of the user (using a secure hashing algorithm like bcrypt or Argon2).
@@ -1068,8 +1218,10 @@ The following entities are the core components of the password manager system. E
 ---
 
 #### **VaultEntry**
+
 - **Purpose**: Represents an individual piece of stored data in the vault, such as a password, secure note, or URL.
 - **Attributes**:
+
   - **id**: Unique identifier for each vault entry.
   - **vault_id**: Foreign key referencing the vault the entry belongs to.
   - **title**: The title or name of the entry (e.g., "Gmail Password").
@@ -1088,8 +1240,10 @@ The following entities are the core components of the password manager system. E
 ---
 
 #### **SharedVault**
+
 - **Purpose**: Represents a vault that can be shared with other users, allowing collaboration on specific vault entries.
 - **Attributes**:
+
   - **id**: Unique identifier for each shared vault.
   - **vault_id**: Foreign key referencing the vault that is being shared.
   - **shared_with_user_id**: Foreign key referencing the user who the vault is shared with.
@@ -1105,8 +1259,10 @@ The following entities are the core components of the password manager system. E
 ---
 
 #### **AuditLog**
+
 - **Purpose**: Tracks significant actions or events within the system, such as user logins, CRUD operations, and sharing actions.
 - **Attributes**:
+
   - **id**: Unique identifier for each log entry.
   - **user_id**: Foreign key referencing the user who performed the action.
   - **action**: A description of the action that was logged (e.g., "create vault entry", "login").
@@ -1120,8 +1276,10 @@ The following entities are the core components of the password manager system. E
 ---
 
 #### **Session**
+
 - **Purpose**: Represents an active session for a user, typically established after login and used to authorize access to the password manager’s vault.
 - **Attributes**:
+
   - **id**: Unique identifier for each session.
   - **user_id**: Foreign key referencing the user who owns the session.
   - **token**: A secure, uniquely generated token for authenticating requests.
@@ -1149,26 +1307,31 @@ This section defines the attributes and constraints associated with each entity 
 #### **User Entity**
 
 - **id**:
+
   - Type: `SERIAL`
   - Constraint: `PRIMARY KEY`
   - Description: Auto-incremented identifier for each user.
 
 - **email**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `UNIQUE NOT NULL`
   - Description: The user's email address, which is unique for each user and is used for login.
 
 - **hashed_password**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NOT NULL`
   - Description: The securely hashed password of the user. This column stores the result of the password hashing function (e.g., bcrypt, Argon2).
 
 - **salt**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NOT NULL`
   - Description: The salt used during the password hashing process, ensuring the uniqueness of hashed passwords for the same input.
 
 - **created_at**:
+
   - Type: `TIMESTAMP`
   - Constraint: `DEFAULT CURRENT_TIMESTAMP`
   - Description: Timestamp when the user account was created.
@@ -1183,47 +1346,56 @@ This section defines the attributes and constraints associated with each entity 
 #### **VaultEntry Entity**
 
 - **id**:
+
   - Type: `SERIAL`
   - Constraint: `PRIMARY KEY`
   - Description: Unique identifier for each vault entry.
 
 - **vault_id**:
+
   - Type: `INTEGER`
   - Constraint: `REFERENCES vaults(id) ON DELETE CASCADE`
   - Description: Foreign key to the vault that contains the entry. Ensures cascading delete if the vault is deleted.
 
 - **title**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NOT NULL`
   - Description: The title or name of the entry (e.g., "Gmail Password").
 
 - **username**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NULL`
   - Description: The username associated with the entry.
 
 - **password**:
+
   - Type: `TEXT`
   - Constraint: `NOT NULL`
   - Encryption: This column will store encrypted password data using **AES-256-GCM**.
   - Description: The encrypted password associated with the entry.
 
 - **url**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NULL`
   - Description: The URL associated with the entry (e.g., the website URL).
 
 - **notes**:
+
   - Type: `TEXT`
   - Constraint: `NULL`
   - Description: Additional notes related to the entry.
 
 - **tags**:
+
   - Type: `TEXT[]`
   - Constraint: `NULL`
   - Description: An array of tags used to categorize the vault entry (e.g., "work", "banking").
 
 - **created_at**:
+
   - Type: `TIMESTAMP`
   - Constraint: `DEFAULT CURRENT_TIMESTAMP`
   - Description: Timestamp when the entry was created.
@@ -1238,26 +1410,31 @@ This section defines the attributes and constraints associated with each entity 
 #### **SharedVault Entity**
 
 - **id**:
+
   - Type: `SERIAL`
   - Constraint: `PRIMARY KEY`
   - Description: Unique identifier for each shared vault.
 
 - **vault_id**:
+
   - Type: `INTEGER`
   - Constraint: `REFERENCES vaults(id) ON DELETE CASCADE`
   - Description: Foreign key to the vault being shared.
 
 - **shared_with_user_id**:
+
   - Type: `INTEGER`
   - Constraint: `REFERENCES users(id) ON DELETE CASCADE`
   - Description: Foreign key to the user with whom the vault is shared.
 
 - **permissions**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NOT NULL`
   - Description: Defines the permissions granted for the shared vault (e.g., read-only, read/write).
 
 - **created_at**:
+
   - Type: `TIMESTAMP`
   - Constraint: `DEFAULT CURRENT_TIMESTAMP`
   - Description: Timestamp when the shared vault was created.
@@ -1272,26 +1449,31 @@ This section defines the attributes and constraints associated with each entity 
 #### **AuditLog Entity**
 
 - **id**:
+
   - Type: `SERIAL`
   - Constraint: `PRIMARY KEY`
   - Description: Unique identifier for each log entry.
 
 - **user_id**:
+
   - Type: `INTEGER`
   - Constraint: `REFERENCES users(id) ON DELETE CASCADE`
   - Description: Foreign key to the user who performed the action.
 
 - **action**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NOT NULL`
   - Description: Describes the action logged (e.g., "create vault entry", "login").
 
 - **timestamp**:
+
   - Type: `TIMESTAMP`
   - Constraint: `DEFAULT CURRENT_TIMESTAMP`
   - Description: Timestamp of when the action occurred.
 
 - **ip_address**:
+
   - Type: `VARCHAR(50)`
   - Constraint: `NULL`
   - Description: IP address from which the action was performed.
@@ -1306,26 +1488,31 @@ This section defines the attributes and constraints associated with each entity 
 #### **Session Entity**
 
 - **id**:
+
   - Type: `SERIAL`
   - Constraint: `PRIMARY KEY`
   - Description: Unique identifier for each session.
 
 - **user_id**:
+
   - Type: `INTEGER`
   - Constraint: `REFERENCES users(id) ON DELETE CASCADE`
   - Description: Foreign key referencing the user associated with the session.
 
 - **token**:
+
   - Type: `VARCHAR(255)`
   - Constraint: `NOT NULL`
   - Description: A secure, randomly generated token used for authentication.
 
 - **created_at**:
+
   - Type: `TIMESTAMP`
   - Constraint: `DEFAULT CURRENT_TIMESTAMP`
   - Description: Timestamp when the session was created.
 
 - **expires_at**:
+
   - Type: `TIMESTAMP`
   - Constraint: `NOT NULL`
   - Description: Timestamp when the session will expire.
@@ -1340,6 +1527,7 @@ This section defines the attributes and constraints associated with each entity 
 ### 2. **Encryption Columns**
 
 Certain sensitive columns will be encrypted using **AES-256-GCM** to ensure data privacy. Specifically:
+
 - **VaultEntry.password**: This column stores passwords and other sensitive data, and will be encrypted before storage. The encryption key will be derived from the user's master password using a secure key derivation function (e.g., Argon2).
 - **VaultEntry.notes**: If storing particularly sensitive information in notes, this can be encrypted with a separate key or the same key used for passwords.
 
@@ -1352,12 +1540,15 @@ The encryption and decryption of these fields will be handled at the application
 Row-Level Security (RLS) is used to ensure that users can only access the vaults and entries that belong to them or that they have been explicitly shared with. The following RLS policies will be enforced:
 
 - **Users can only access their own vaults**:
+
   - Policy: Only allow access to vaults where the `user_id` matches the session's user ID.
 
 - **Users can only access their own vault entries**:
+
   - Policy: Only allow access to vault entries where the `vault_id` belongs to the user's vault.
 
 - **Shared vaults**:
+
   - Policy: Allow access to shared vaults based on the `shared_with_user_id` field.
 
 - **Audit logs are restricted**:
@@ -1382,9 +1573,11 @@ This section defines the relationships between the various entities in the syste
 - **Description**: A user can have multiple vault entries, but each vault entry is associated with exactly one user. This relationship ensures that a user's vault entries are tied to their account and can be managed accordingly.
 
 - **Entities Involved**:
+
   - **User** → **VaultEntry**
 
 - **Relationship**:
+
   - A **User** can create many **VaultEntry** records (one-to-many).
   - A **VaultEntry** belongs to one **User** (many-to-one).
 
@@ -1398,13 +1591,16 @@ This section defines the relationships between the various entities in the syste
 - **Description**: A vault can be shared with multiple users, and a user can have access to multiple vaults. This relationship is implemented through the **SharedVault** entity, which manages the many-to-many relationship between users and shared vaults.
 
 - **Entities Involved**:
+
   - **User** ↔ **Vault** (via **SharedVault**)
 
 - **Relationship**:
+
   - A **Vault** can be shared with many **Users** (many-to-many).
   - A **User** can have access to many **Vaults** (many-to-many).
 
 - **Through Entity**:
+
   - The **SharedVault** entity manages this many-to-many relationship. It stores the `user_id`, `vault_id`, and the `permissions` granted to the user for that specific vault.
 
 - **Foreign Keys**:
@@ -1418,9 +1614,11 @@ This section defines the relationships between the various entities in the syste
 - **Description**: Each action performed by a user (such as logging in, creating an entry, etc.) is logged in the **AuditLog** table. A user can have multiple log entries, but each log entry is associated with exactly one user.
 
 - **Entities Involved**:
+
   - **User** → **AuditLog**
 
 - **Relationship**:
+
   - A **User** can generate many **AuditLog** entries (one-to-many).
   - An **AuditLog** belongs to one **User** (many-to-one).
 
@@ -1434,9 +1632,11 @@ This section defines the relationships between the various entities in the syste
 - **Description**: A user can have multiple active sessions (e.g., from different devices or browsers), but each session is associated with exactly one user.
 
 - **Entities Involved**:
+
   - **User** → **Session**
 
 - **Relationship**:
+
   - A **User** can have many **Session** records (one-to-many).
   - A **Session** is associated with one **User** (many-to-one).
 
@@ -1449,13 +1649,13 @@ This section defines the relationships between the various entities in the syste
 
 Below is the textual representation of the Entity-Relationship (ER) diagram for the described relationships:
 
-| Entity         | Attributes                                             | Relationships                                                    |
-|----------------|---------------------------------------------------------|-------------------------------------------------------------------|
-| User           | id (PK), email, hashed_password, salt, created_at, updated_at | One-to-Many → VaultEntry<br>One-to-Many → AuditLog<br>One-to-Many → Session<br>Many-to-Many → Vault (via SharedVault) |
-| VaultEntry     | id (PK), user_id (FK), title, username, password (encrypted), notes, folder, created_at, updated_at | Many-to-One → User                                               |
-| SharedVault    | id (PK), vault_id (FK), user_id (FK), permissions, created_at, updated_at | Many-to-One → User<br>Many-to-One → Vault                        |
-| AuditLog       | id (PK), user_id (FK), action, timestamp, ip_address, details | Many-to-One → User                                               |
-| Session        | id (PK), user_id (FK), token, created_at, expires_at, last_activity_at | Many-to-One → User                                               |
+| Entity      | Attributes                                                                                          | Relationships                                                                                                         |
+| ----------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| User        | id (PK), email, hashed_password, salt, created_at, updated_at                                       | One-to-Many → VaultEntry<br>One-to-Many → AuditLog<br>One-to-Many → Session<br>Many-to-Many → Vault (via SharedVault) |
+| VaultEntry  | id (PK), user_id (FK), title, username, password (encrypted), notes, folder, created_at, updated_at | Many-to-One → User                                                                                                    |
+| SharedVault | id (PK), vault_id (FK), user_id (FK), permissions, created_at, updated_at                           | Many-to-One → User<br>Many-to-One → Vault                                                                             |
+| AuditLog    | id (PK), user_id (FK), action, timestamp, ip_address, details                                       | Many-to-One → User                                                                                                    |
+| Session     | id (PK), user_id (FK), token, created_at, expires_at, last_activity_at                              | Many-to-One → User                                                                                                    |
 
 ---
 
@@ -1468,60 +1668,1151 @@ Below is the textual representation of the Entity-Relationship (ER) diagram for 
 
 These relationships allow us to structure the data in a way that supports the application’s core functionalities such as vault management, auditing, and session handling while maintaining integrity and security across the system.
 
-
-
 ## 7. API Specification
+
+Defines a versioned, RESTful JSON API secured by Bearer tokens and scoped by RBAC. All endpoints reside under `/api/v1`.
+**Conventions:**
+
+- All requests and responses use `application/json`.
+- Standard HTTP status codes: `2xx` success, `4xx` client error, `5xx` server error.
+- Errors return `{ code: string, message: string, details?: any }`.
+- Rate limiting applied to authentication and write endpoints.
+- CORS configured to allow only trusted origins.
+- Endpoints enforce RLS and RBAC guards.
+
 ### 7.1. Endpoint Catalog
-- Table: Method, Path, Auth, Request schema, Response schema, Errors.
+
+### 7.1. Endpoint Catalog
+
+| Method | Path                      | Auth Required | Request Schema                              | Response Schema             | Common Errors                           |
+| ------ | ------------------------- | ------------- | ------------------------------------------- | --------------------------- | --------------------------------------- |
+| POST   | /auth/register            | No            | email, password                             | success message             | 400 (validation), 409 (conflict)        |
+| POST   | /auth/login               | No            | email, password                             | access_token, refresh_token | 400 (invalid), 401 (unauthorized)       |
+| POST   | /auth/forgot-password     | No            | email                                       | success message             | 400 (validation), 404 (not found)       |
+| POST   | /auth/reset-password      | No            | token, new_password                         | success message             | 400 (validation), 401 (invalid token)   |
+| GET    | /vault/entries            | Yes           | none                                        | list of VaultEntries        | 401 (unauthenticated)                   |
+| POST   | /vault/entries            | Yes           | title, username, password, notes, folder_id | created VaultEntry          | 400 (validation), 401 (unauthenticated) |
+| PATCH  | /vault/entries/{entryId}  | Yes           | partial VaultEntry fields                   | updated VaultEntry          | 400 (validation), 404 (not found)       |
+| DELETE | /vault/entries/{entryId}  | Yes           | none                                        | success message             | 404 (not found), 401 (unauthorized)     |
+| GET    | /vault/folders            | Yes           | none                                        | list of Folders             | 401 (unauthenticated)                   |
+| POST   | /vault/folders            | Yes           | name                                        | created Folder              | 400 (validation)                        |
+| PATCH  | /vault/folders/{folderId} | Yes           | name                                        | updated Folder              | 404 (not found)                         |
+| DELETE | /vault/folders/{folderId} | Yes           | none                                        | success message             | 404 (not found)                         |
+| GET    | /vault/tags               | Yes           | none                                        | list of Tags                | 401 (unauthenticated)                   |
+| POST   | /vault/tags               | Yes           | name                                        | created Tag                 | 400 (validation)                        |
+| PATCH  | /vault/tags/{tagId}       | Yes           | name                                        | updated Tag                 | 404 (not found)                         |
+| DELETE | /vault/tags/{tagId}       | Yes           | none                                        | success message             | 404 (not found)                         |
+| POST   | /vault/share              | Yes           | vault_entry_id, recipient_email             | share record                | 400 (validation), 404 (not found)       |
+| GET    | /vault/shared             | Yes           | none                                        | list of shared entries      | 401 (unauthenticated)                   |
+| PATCH  | /vault/share/{shareId}    | Yes           | updated permissions                         | updated share               | 404 (not found)                         |
+| DELETE | /vault/share/{shareId}    | Yes           | none                                        | success message             | 404 (not found)                         |
+| GET    | /audit/logs               | Admin only    | filters (optional)                          | list of AuditLogs           | 403 (forbidden)                         |
+| GET    | /admin/users              | Admin only    | filters (optional)                          | list of Users               | 403 (forbidden)                         |
+| PATCH  | /admin/users/{userId}     | Admin only    | partial user updates                        | updated User                | 404 (not found)                         |
+| DELETE | /admin/users/{userId}     | Admin only    | none                                        | success message             | 404 (not found)                         |
+
 ### 7.2. Rate Limiting & Throttling
-- Rules per endpoint.
+
+Rate limiting ensures fair use, prevents abuse, and mitigates brute-force attacks. Rules are applied per authenticated user or per IP address for unauthenticated requests.
+
+| Endpoint Group                                | Limit Rule                       | Notes                                             |
+| --------------------------------------------- | -------------------------------- | ------------------------------------------------- |
+| POST /auth/register                           | 5 requests per hour per IP       | Prevent mass account creation                     |
+| POST /auth/login                              | 10 requests per minute per IP    | Mitigate brute-force login attempts               |
+| POST /auth/forgot-password                    | 3 requests per hour per IP       | Control password reset abuse                      |
+| POST /auth/reset-password                     | 5 requests per hour per IP       | Control reset abuse after token issuance          |
+| Vault Operations (GET/POST/PATCH/DELETE)      | 60 requests per minute per user  | Allow fluid vault management while limiting abuse |
+| Folder/Tag Management (GET/POST/PATCH/DELETE) | 30 requests per minute per user  | Lightweight control over metadata ops             |
+| Sharing Endpoints (POST/PATCH/DELETE)         | 20 requests per minute per user  | Prevent spam-sharing attacks                      |
+| GET /vault/shared                             | 60 requests per minute per user  | Standard read operation allowance                 |
+| Audit/Admin Endpoints (GET/PATCH/DELETE)      | 15 requests per minute per admin | Admin operations are heavy and sensitive          |
+
+**Enforcement Details:**
+
+- Exceeding limits returns HTTP `429 Too Many Requests`.
+- Rate limits reset using rolling windows.
+- Critical endpoints (login, register, reset) are more restrictive.
+
 ### 7.3. Versioning Strategy
-- “v1” prefix, deprecation policy.
+
+All API endpoints are namespaced under `/api/v1` to ensure stability and controlled evolution over time.
+
+| Aspect               | Policy                                                                           |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Namespace            | `/api/v1/...` for all current endpoints                                          |
+| Breaking Changes     | Introduced only in a new major version (`v2`, `v3`, etc.)                        |
+| Minor Enhancements   | Non-breaking changes (e.g., new optional fields) allowed in `v1`                 |
+| Deprecation Notice   | Deprecated fields/endpoints marked clearly in response metadata                  |
+| Deprecation Timeline | Minimum 6 months notice before removing deprecated functionality                 |
+| Client Compatibility | Old clients remain functional during deprecation window                          |
+| Communication        | Major changes and deprecations announced via changelog and documentation updates |
+
+**Guiding Principle:**
+Maintain backward compatibility within a major version. Only additive, non-breaking changes allowed until a full new version is warranted.
 
 ## 8. User Interface Specification
-### 8.1. Page Wireframes
-- Login, Dashboard, VaultDetail, Settings.
-### 8.2. Component Catalogue
-- Reusable UI elements: Input, Modal, DataTable.
-### 8.3. Accessibility Requirements
-- WCAG AA compliance checklist.
 
-## 9. Security Model
-### 9.1. Threat Model
-- STRIDE categories, attacker capabilities.
-### 9.2. Key Management
-- Master key handling, HSM integration, rotation policy.
-### 9.3. MFA & Recovery
-- TOTP enrollment, backup codes, recovery flow.
+This section defines the expected structure, behavior, and constraints of the user interface (UI) for the Password Manager web application.
 
-## 10. Infrastructure & Deployment
-### 10.1. Environments
-- Dev, staging, production – differences.
-### 10.2. IaC & Configuration
-- Terraform modules, parameter store.
-### 10.3. CI/CD Pipelines
-- Build → test → deploy steps, approval gates.
+### 8.1. Design Philosophy
 
-## 11. Testing Strategy
-### 11.1. Unit Tests
-- Coverage targets, key modules.
-### 11.2. Integration Tests
-- End-to-end flows, encryption sanity.
-### 11.3. Security Tests
-- Static analysis, penetration tests, dependency scans.
+- Clean, minimalistic, professional design focused on usability.
+- Responsive across desktop, tablet, and mobile devices.
+- Accessibility compliant (WCAG 2.1 AA standards).
+- Emphasize security through UI (clear session/logout indicators, sensitive operation confirmations).
 
-## 12. Glossary
-- Define acronyms and domain terms (AES-GCM, RLS, HSM).
+### 8.2. Core Screens
 
-## 13. References
-- Links to standards, RFCs, crypto libraries, internal policies.
+| Screen                  | Description                                                            | Key Actions                             |
+| ----------------------- | ---------------------------------------------------------------------- | --------------------------------------- |
+| Landing Page            | Public homepage with app overview and login/register options           | Login, Register navigation              |
+| Registration            | Form to create an account, validate input, strong password suggestions | Submit registration form                |
+| Login                   | Authentication page with "Remember Me" and "Forgot Password" options   | Submit credentials, redirect on success |
+| Dashboard               | Main landing after login; overview of vault entries, folders, tags     | Navigate to entries, create new, search |
+| Vault Entry View/Edit   | Detailed view to read, edit, or delete a vault entry                   | Update fields, save, delete             |
+| Folder/Tag Management   | Manage organization structures for entries                             | Add, edit, delete folders and tags      |
+| Sharing Management      | View/manage shared entries and access controls                         | Invite users, revoke access             |
+| Settings/Profile        | Update personal info, change master password, manage session tokens    | Save changes, logout from all devices   |
+| Audit Log (Admin)       | View system activity (login, CRUD, sharing events) with filters        | Search logs, filter by user or action   |
+| User Management (Admin) | Manage user accounts, reset credentials, assign roles                  |
+
+### 8.3. Page Wireframes
+
+Wireframes define the skeletal layout of core pages. These act as blueprints for implementation, focusing on structure, placement, and function over visual styling.
 
 ---
 
-**Instructions to Build This File:**
-1. Create a Markdown file `abstract.md`.
-2. Copy the outline above into it.
-3. Under each heading, draft detailed prose and bullet points covering the specified content.
-4. Cross-reference sections where needed (e.g., link Functional to Security Model).
-5. Review for completeness before development.
-6. Freeze version 1.0; update as changes occur.```
+#### Login Page
+
+- **Header**: App logo centered at the top.
+- **Form**:
+  - Email input
+  - Password input (masked, toggle visibility)
+  - "Remember Me" checkbox
+  - "Forgot Password?" link
+- **Actions**:
+  - Primary button: "Log In"
+  - Secondary text link: "Don't have an account? Register"
+
+_Notes_: Minimal distractions, focus solely on authentication. Submit triggers client-side validation before API request.
+
+---
+
+#### Dashboard Page
+
+- **Top Navigation Bar**:
+
+  - App logo (left)
+  - Search bar (center)
+  - Profile menu with avatar (right)
+
+- **Side Navigation Menu**:
+
+  - Home
+  - Vault Entries
+  - Folders
+  - Tags
+  - Shared Vaults
+  - Audit Logs (admin only)
+  - Settings
+
+- **Main Content Area**:
+  - Quick stats (number of entries, folders, tags)
+  - Recent activity (logins, recent edits)
+  - Button: "Add New Vault Entry"
+
+_Notes_: Dashboard acts as control center. Information density balanced to avoid overwhelming the user.
+
+---
+
+#### Vault Detail Page
+
+- **Breadcrumb Navigation**: Home > Vault > Entry Name
+- **Entry Metadata Display**:
+
+  - Title
+  - Username
+  - URL (clickable)
+  - Notes
+  - Creation/Last modified timestamps
+  - Folder/Tags assignment
+
+- **Actions**:
+
+  - Edit Entry (opens form view)
+  - Delete Entry (confirmation modal)
+  - Share Entry (opens share modal)
+
+- **Security Features**:
+  - Toggle to reveal/hide passwords securely
+  - Copy-to-clipboard button for fields
+
+_Notes_: Entry data must be presented clearly, minimizing clicks for essential actions while safeguarding sensitive content.
+
+---
+
+#### Settings Page
+
+- **Sections**:
+
+  - **Profile Info**:
+    - View and update name, email.
+    - Change master password (mandatory re-authentication).
+  - **Security Settings**:
+    - Enable/disable 2FA (future enhancement).
+    - View active sessions and log out individually or all at once.
+  - **Application Preferences**:
+    - Toggle light/dark theme.
+    - Set auto-logout timeout duration.
+
+- **Actions**:
+  - Save Changes (primary button)
+  - Cancel Changes (secondary button)
+
+_Notes_: Settings structured into collapsible panels for a clean experience. Sensitive changes require password confirmation.
+
+---
+
+**General Wireframe Principles**:
+
+- All pages responsive and mobile-friendly.
+- Primary actions emphasized using distinctive button styling.
+- Error states, empty states, and loading skeletons included from the beginning.
+
+---
+
+### 8.4. Component Catalogue
+
+Defines all atomic and composite components to ensure UI consistency, reusability, and maintainability.
+
+---
+
+#### Input Components
+
+- **TextInput**
+
+  - Props: `label`, `placeholder`, `type`, `value`, `onChange`, `error`
+  - Supports types: text, email, password
+  - Integrated validation feedback (e.g., red border on error)
+
+- **Checkbox**
+
+  - Props: `label`, `checked`, `onChange`
+  - Used for options like "Remember Me" and setting toggles
+
+- **DropdownSelect**
+
+  - Props: `label`, `options`, `selected`, `onChange`
+  - Used for folder selection, tagging entries, settings choices
+
+- **TextArea**
+  - Props: `label`, `placeholder`, `value`, `onChange`, `rows`
+  - Used for notes or long text fields inside vault entries
+
+---
+
+#### Modal Components
+
+- **Modal**
+
+  - Props: `title`, `isOpen`, `onClose`, `children`
+  - Overlay with darkened background
+  - Supports multiple sizes (small, medium, large)
+  - Accessible (focus trap, esc-to-close, aria roles)
+
+- **ConfirmModal**
+
+  - Specialized modal for confirmation flows (e.g., delete entry)
+  - Props: `title`, `message`, `onConfirm`, `onCancel`
+
+- **ShareModal**
+  - Custom modal allowing selection of users to share vault entries with
+  - Includes email autocomplete, permission levels
+
+---
+
+#### Data Display Components
+
+- **DataTable**
+
+  - Props: `columns`, `data`, `pagination`, `onRowClick`
+  - Responsive design with sorting, filtering, pagination
+  - Used for vault entries, shared vaults, audit logs
+
+- **Card**
+
+  - Props: `title`, `description`, `icon`, `onClick`
+  - Used for dashboard quick stats, empty states
+
+- **Badge**
+
+  - Props: `text`, `color`
+  - Used to display tag labels or statuses
+
+- **Breadcrumbs**
+  - Props: `paths`
+  - Used for navigation context inside Vault detail views
+
+---
+
+#### Feedback Components
+
+- **ToastNotification**
+
+  - Props: `type`, `message`, `duration`
+  - Used for success, error, warning feedback
+
+- **Loader**
+
+  - Props: `size`
+  - Spinner or skeleton loading indicators for async content
+
+- **EmptyState**
+  - Props: `title`, `description`, `actionLabel`, `onAction`
+  - Displayed when no entries, no search results, etc.
+
+---
+
+#### Layout Components
+
+- **Sidebar**
+
+  - Dynamic generation based on user role (user, admin)
+
+- **TopNav**
+
+  - Includes logo, search bar, profile dropdown
+
+- **PageContainer**
+  - Standardized padding and width constraints for all pages
+
+---
+
+**Component Guidelines**:
+
+- Designed mobile-first, fully responsive
+- Styled using a design system (e.g., TailwindCSS or custom tokens)
+- Accessibility first: semantic HTML, keyboard navigability, screen reader support
+- All components unit-tested individually
+
+---
+
+### 8.5. Accessibility Requirements
+
+The application will adhere strictly to WCAG 2.1 AA guidelines to ensure accessibility for all users, including those with disabilities.
+
+---
+
+#### Perceivable
+
+- **Text Alternatives**: All non-text content (icons, images, buttons) will include descriptive `alt` text or `aria-labels`.
+- **Adaptable Content**: Support for screen reader navigation and content resizing up to 200% without loss of functionality.
+- **Distinguishable**:
+  - Minimum contrast ratio of 4.5:1 for normal text, 3:1 for large text.
+  - No reliance on color alone to convey information (e.g., errors use color + icons/text).
+  - Provide clear focus indicators on interactive elements.
+
+---
+
+#### Operable
+
+- **Keyboard Accessible**:
+  - Full application navigation and actions via keyboard alone.
+  - Logical tab order maintained across all pages.
+  - Visible focus states for inputs, links, buttons, and controls.
+- **Enough Time**:
+  - No time-limited interactions without user consent (e.g., token expiration prompts will allow extensions).
+- **Seizures and Physical Reactions**:
+  - No flashing content or animations triggering more than three times per second.
+- **Navigable**:
+  - Use of landmarks (`<main>`, `<nav>`, `<header>`, `<footer>`) for semantic structure.
+  - Breadcrumb navigation on internal pages.
+  - Skip-to-content links for assistive tech users.
+
+---
+
+#### Understandable
+
+- **Readable Text**:
+  - Plain, clear language usage across the UI.
+  - Language of each page is programmatically identified (`<html lang="en">`).
+- **Predictable Behavior**:
+  - Consistent navigation, component layouts, and interaction patterns across the entire app.
+- **Input Assistance**:
+  - Inline form validation errors announced to assistive technologies.
+  - Clear labels and instructions for all form inputs.
+
+---
+
+#### Robust
+
+- **Assistive Technology Support**:
+  - Full compatibility with screen readers (e.g., NVDA, VoiceOver).
+  - Use of ARIA roles and attributes where necessary.
+- **Valid HTML/CSS**:
+  - All markup will pass W3C validation to ensure interoperability across platforms and devices.
+
+---
+
+**Accessibility Testing Tools and Practices**:
+
+- Automated scanners (axe, Lighthouse).
+- Manual keyboard-only testing.
+- Screen reader verification (NVDA, VoiceOver).
+- Regular audits pre-release and on major UI changes.
+
+---
+
+## 9. Security Model
+
+This section outlines the security foundations of the Password Manager, ensuring protection against common threats and guaranteeing confidentiality, integrity, and availability of user data.
+
+### 9.1. Threat Model
+
+This section defines the assumed threat landscape for the Password Manager, following Microsoft's STRIDE methodology to systematically identify and mitigate risks.
+
+---
+
+#### STRIDE Categories
+
+| Threat Category             | Description                                | Example Mitigations                                                    |
+| :-------------------------- | :----------------------------------------- | :--------------------------------------------------------------------- |
+| **Spoofing**                | Impersonating another user or system.      | Strong authentication (MFA), password policies, session management.    |
+| **Tampering**               | Unauthorized modification of data.         | End-to-end encryption, data integrity checks (GCM tags), RLS policies. |
+| **Repudiation**             | Denying actions without accountability.    | Immutable audit logs with tamper-evident storage.                      |
+| **Information Disclosure**  | Exposing confidential information.         | Client-side encryption, TLS 1.3, strict API access controls.           |
+| **Denial of Service (DoS)** | Degrading or blocking system availability. | Rate limiting, scalable deployments, WAF/DDoS protections.             |
+| **Elevation of Privilege**  | Gaining unauthorized higher permissions.   | Strict RBAC, scope-restricted tokens, rigorous access controls.        |
+
+---
+
+#### Attacker Capabilities
+
+- **External Attackers**:
+
+  - Network-level attackers (attempting MITM, eavesdropping).
+  - Credential stuffing with leaked credentials.
+  - Phishing attempts targeting user credentials.
+
+- **Insider Threats**:
+
+  - Malicious administrators or compromised support staff attempting unauthorized data access.
+
+- **Compromised Clients**:
+
+  - Malware or browser extensions extracting master passwords or vault data.
+  - Users losing device control without proper session revocation.
+
+- **Server-Side Threats**:
+
+  - API abuse (e.g., exploiting weak endpoint validation).
+  - Attempting privilege escalation through flawed RLS or RBAC misconfigurations.
+
+- **Environmental Risks**:
+  - Misconfigured cloud services exposing storage buckets or logs.
+  - Outdated server software leading to known exploit vulnerabilities.
+
+---
+
+All design decisions explicitly assume that:
+
+- The backend may become partially compromised but cannot decrypt vault data without user master secrets.
+- The frontend code can be viewed by attackers, requiring zero-trust assumptions.
+- Secrets such as master passwords never leave the client device unencrypted.
+
+---
+
+### 9.2. Key Management
+
+Effective key management is central to the security and confidentiality of user data in the Password Manager. This section details how keys are generated, stored, rotated, and protected throughout the system.
+
+---
+
+#### 9.2.1. Master Key Handling
+
+- **Master Key Generation**:
+
+  - The master key is derived from the user's master password using the Argon2id Key Derivation Function (KDF).
+  - The process incorporates a strong salt to prevent precomputed attacks and uses high iterations to slow down brute-force attempts.
+
+- **Master Key Storage**:
+
+  - The master key itself is **never stored** on the server. Only the **hash** of the master key (using bcrypt or Argon2) is stored in the database.
+  - Vault data is encrypted using the derived key on the client side before it is sent to the server, ensuring no unencrypted data is stored or transmitted.
+
+- **Key Usage**:
+  - The derived key is used exclusively for encryption/decryption of the user's vault entries.
+  - The key never leaves the client’s environment. This guarantees a **zero-knowledge** architecture, where the server can never access the user's data.
+
+---
+
+#### 9.2.2. Hardware Security Module (HSM) Integration
+
+- **HSM for Key Storage**:
+
+  - **External Hardware Security Modules (HSMs)** may be used to store critical encryption keys (e.g., for encrypting database backups, securing internal API keys, or further protecting master key derivation).
+  - The HSM would never store user vault keys or any user-specific data, but it would be used for securing internal service credentials, encryption keys, and application-level secrets.
+
+- **Key Management Integration**:
+  - An HSM is integrated with the backend API layer to secure keys related to server-side operations (e.g., encryption of user data storage, signing tokens).
+  - Each key is only accessible within the HSM and is never exposed in plaintext in memory, ensuring the integrity of the encryption process.
+
+---
+
+#### 9.2.3. Key Rotation Policy
+
+- **Periodic Key Rotation**:
+
+  - Master keys are rotated periodically by the user through a **re-encryption process** triggered by a password change. The system will prompt users to update their master password if deemed necessary (e.g., after a security breach).
+  - This key rotation is enforced client-side, ensuring the user’s vault remains securely encrypted with a fresh master key.
+
+- **Key Rotation for Stored Vault Entries**:
+
+  - The user’s vault entries are re-encrypted with the new key every time the master password is updated.
+  - All previous vault data encrypted with the old key will be re-encrypted using the newly derived master key, and the old key will be discarded immediately after.
+
+- **Secure Key Expiration**:
+
+  - Keys are set with an expiration date, and once expired, the system will trigger a secure rotation of keys, accompanied by the re-encryption of data stored with the old keys.
+
+- **Key Revocation**:
+
+  - In cases where a key is suspected to have been compromised, it can be revoked immediately by the system. Vault data encrypted with the compromised key will be made inaccessible until re-encrypted with a new key derived from the updated master password.
+
+- **Logging Key Rotation Events**:
+  - All key rotations and related operations (including key revocation, re-encryption, and password updates) are logged and accessible only to authorized personnel, ensuring complete audit trails for compliance and security purposes.
+
+---
+
+#### 9.2.4. Backup & Disaster Recovery
+
+- **Key Backups**:
+
+  - For disaster recovery, keys used for encryption (especially the master keys) can be backed up in a **secure offline manner**. This may involve backup to a secure, encrypted cloud storage solution, or physical storage in a certified secure facility, ensuring only authorized administrators can access the keys if needed.
+
+- **Key Destruction**:
+
+  - Upon user account deletion or deactivation, all associated encryption keys will be permanently destroyed both from the server and backup locations, ensuring no residual access to sensitive data.
+
+- **Redundancy**:
+  - Key management systems, especially those related to HSMs and key vaults, are designed with high availability to avoid single points of failure and ensure system uptime in case of key service failure.
+
+### 9.3. MFA & Recovery
+
+Multi-factor authentication (MFA) is a critical security layer to protect user accounts from unauthorized access. This section outlines the implementation of MFA, including TOTP (Time-based One-Time Password) enrollment, backup codes, and the account recovery flow.
+
+---
+
+#### 9.3.1. TOTP Enrollment
+
+- **TOTP Setup**:
+
+  - Users can enable **TOTP-based MFA** through their account settings by scanning a QR code with an authenticator app (e.g., Google Authenticator, Authy, etc.).
+  - The backend generates a secret key, which is shared with the user's authenticator app via a QR code. The secret key is never exposed to the server in plaintext.
+  - The user is prompted to enter a one-time code generated by their authenticator app to verify successful enrollment. This ensures that the user has control of the MFA device.
+
+- **TOTP Secret Storage**:
+
+  - The TOTP secret key is securely stored on the server in a hashed format using a cryptographic hashing algorithm (e.g., SHA-256) to prevent direct access to the secret.
+  - The hashed TOTP secret is used to verify the codes generated by the user's authenticator app.
+
+- **TOTP Validation**:
+
+  - Each time the user logs in, they are prompted to enter the code generated by their authenticator app in addition to their master password.
+  - The system checks the code against the stored hash to authenticate the user.
+
+- **TOTP Backup**:
+  - Upon successful enrollment, the user is provided with a set of **backup codes**. These codes can be used to access the account in case the user loses access to their MFA device (e.g., phone lost or reset).
+  - Backup codes are one-time use and must be regenerated after each use. Users are encouraged to store backup codes securely (e.g., printed and stored offline).
+
+---
+
+#### 9.3.2. Backup Codes
+
+- **Generation & Storage**:
+
+  - Backup codes are randomly generated during the MFA setup process. A set of backup codes (typically 5-10) is issued and shown to the user, who is instructed to save them in a secure location.
+  - Backup codes are stored in the database in an encrypted form to prevent unauthorized access.
+
+- **Usage & Expiry**:
+
+  - Each backup code can be used once. After it is used, it is automatically marked as expired and cannot be reused.
+  - The system logs the usage of each backup code and notifies the user when backup codes are about to expire or when they have been fully used.
+  - Users are encouraged to generate new backup codes if they have exhausted their original set.
+
+- **Regeneration**:
+  - If the user loses access to their MFA device and backup codes, they can regenerate a new set of backup codes by going through the account recovery process.
+
+---
+
+#### 9.3.3. Account Recovery Flow
+
+- **Recovery Initiation**:
+
+  - In the event that the user cannot access their MFA device or backup codes, the account recovery process can be initiated via the "Forgot MFA" or "Can't access MFA?" link on the login page.
+  - The user is prompted to verify their identity using a secondary email or security questions (if enabled).
+
+- **Identity Verification**:
+
+  - To verify the user’s identity, the system may require the user to provide personal information (e.g., email, phone number) or answer pre-set security questions.
+  - In some cases, a **recovery code** or a **security verification email** is sent to a trusted secondary email address to confirm the identity.
+
+- **Disabling MFA Temporarily**:
+
+  - Once the user's identity is verified, MFA is temporarily disabled for their account. The user is then notified that they can access the account without MFA.
+  - The user is strongly encouraged to re-enable MFA immediately after recovering access.
+
+- **New MFA Enrollment**:
+
+  - After MFA is disabled, the user can set up a new MFA method (e.g., TOTP enrollment) and regenerate new backup codes for continued protection.
+  - The system ensures that all backup codes are invalidated during the recovery process and generates a new set of backup codes for the user.
+
+- **Logging & Auditing**:
+
+  - All recovery attempts are logged for security purposes, with relevant details such as timestamps, recovery methods used, and IP addresses.
+  - Suspicious recovery attempts (e.g., multiple failed attempts, unusual IP addresses) trigger alerts to system administrators and may require additional verification steps.
+
+- **Rate Limiting on Recovery Attempts**:
+  - To prevent brute-force attacks on the account recovery process, the system applies **rate limiting** on recovery requests. Multiple failed attempts trigger account lockout or CAPTCHA challenges to ensure that recovery requests are legitimate.
+
+---
+
+This comprehensive MFA and recovery system ensures that user accounts are protected even if the primary authentication method is compromised, providing secure fallback options while maintaining strict controls over the recovery process.
+
+## 10. Infrastructure & Deployment
+
+This section outlines the infrastructure and deployment strategies that will be used to host, scale, and maintain the password manager application. It provides details on the chosen technologies, environments, and processes for deploying the application securely and efficiently.
+
+### 10.1. Environments
+
+The password manager application will be deployed across three primary environments: **Development**, **Staging**, and **Production**. Each environment serves a distinct purpose in the development lifecycle, ensuring that the application is built, tested, and deployed in an organized and efficient manner. Below is an overview of each environment, including key differences and configurations:
+
+---
+
+#### 10.1.1. Development Environment
+
+The **Development** environment is used by the development team for building, testing, and debugging new features. It allows for rapid iteration and testing with minimal restrictions. The environment will be set up to simulate the production environment, but with reduced security and performance optimizations to facilitate easy debugging and quick updates.
+
+- **Purpose**: Testing new features, debugging, and development of core functionality.
+- **Key Characteristics**:
+  - Runs on local machines or developer-specific cloud instances.
+  - Quick deployment and frequent code pushes.
+  - Access to logging, debugging tools, and real-time monitoring for developers.
+  - Lower security constraints for faster iteration.
+  - Database is a separate instance, not containing production data.
+  - Manual data population may be required for feature testing.
+- **Deployment**: Uses Docker Compose or Kubernetes for local or dedicated cloud-based environments.
+
+---
+
+#### 10.1.2. Staging Environment
+
+The **Staging** environment is used for integration testing and to validate new features before they are deployed to production. This environment closely mimics the production setup, using the same cloud infrastructure, configuration, and database structure (with anonymized data). The staging environment provides a final validation step to ensure the application is ready for release.
+
+- **Purpose**: Full integration testing, load testing, and pre-production validation.
+- **Key Characteristics**:
+  - Mirrors production in terms of infrastructure, database, and services.
+  - Anonymized production data may be used for testing.
+  - More stringent security controls compared to development (e.g., HTTPS, rate limiting).
+  - Continuous integration (CI) processes automate deployment to staging after each commit.
+  - Ensures that features work as expected in a production-like environment.
+- **Deployment**: Deployed using automated CI/CD pipelines, with configuration tailored to the staging environment (e.g., separate database, storage, etc.).
+
+---
+
+#### 10.1.3. Production Environment
+
+The **Production** environment is the live environment where the application serves real users. It is designed for high availability, reliability, and security. This environment handles live user traffic and stores real data, making it the most critical and closely monitored environment.
+
+- **Purpose**: Serving real user traffic, storing production data, and providing the final service.
+- **Key Characteristics**:
+  - Designed for scalability, reliability, and high availability (e.g., multi-AZ or multi-region deployment).
+  - Production data (encrypted) is stored here.
+  - Full security controls are in place, including network segmentation, firewalls, and encryption.
+  - Traffic routing is optimized for load balancing and failover.
+  - Continuous monitoring and alerting systems in place for uptime, performance, and security.
+- **Deployment**: Deployed using CI/CD pipelines with strict validation and approval before pushing to production. Rollback strategies are in place in case of deployment failures.
+
+---
+
+#### 10.1.4. Differences Between Environments
+
+| Feature                  | Development           | Staging                                  | Production                                         |
+| ------------------------ | --------------------- | ---------------------------------------- | -------------------------------------------------- |
+| **Purpose**              | Development & Testing | Full integration testing                 | Live user traffic & data                           |
+| **Data**                 | Mock/anonymized data  | Anonymized production data               | Real user data (encrypted)                         |
+| **Security**             | Low security controls | High security controls                   | Full security (SSL, encryption, RBAC)              |
+| **Performance**          | Low optimization      | Medium optimization                      | Fully optimized for performance                    |
+| **Deployment Frequency** | Frequent code pushes  | After successful tests                   | After final review, stable releases                |
+| **Monitoring**           | Logging and debugging | Integration monitoring                   | Continuous uptime, error alerts, and health checks |
+| **Scale**                | Low scale (local/VM)  | Medium scale (scaled to production size) | High scale (auto-scaling, load balancing)          |
+
+---
+
+The **Development** and **Staging** environments enable the development team to test and ensure that features are functional and secure before they reach the **Production** environment. Each environment is optimized to suit its specific purpose, ensuring that issues are identified and addressed early in the development process, reducing the risk of problems in the production environment.
+
+---
+
+### 10.2. IaC & Configuration
+
+Infrastructure as Code (IaC) is a key practice in modern software development and deployment, enabling the management and provisioning of infrastructure using machine-readable configuration files. For this password manager application, **Terraform** will be used to define and provision the infrastructure across various environments (Development, Staging, and Production). This approach ensures consistency, repeatability, and scalability, allowing the infrastructure to be easily maintained and version-controlled.
+
+---
+
+#### 10.2.1. Terraform Modules
+
+**Terraform Modules** will be used to organize infrastructure resources into reusable components, improving both maintainability and scalability. Modules are self-contained, reusable pieces of infrastructure that define specific aspects of the environment, such as virtual machines, networking, and storage. These modules will be written in HashiCorp Configuration Language (HCL) and stored in the version-controlled repository.
+
+- **Purpose**: To define reusable infrastructure components for creating, updating, and managing cloud resources (e.g., VMs, storage, networking).
+- **Benefits**:
+  - **Reusability**: Define once and reuse across multiple environments.
+  - **Modularity**: Isolate individual components (e.g., database, networking, security) for better separation of concerns.
+  - **Versioning**: Track changes and roll back to previous infrastructure configurations.
+
+##### Examples of Terraform Modules:
+
+1. **Networking Module**:
+
+   - Defines VPCs, subnets, security groups, and other networking resources.
+   - Ensures secure and consistent network configurations across environments.
+
+2. **Compute Module**:
+
+   - Defines EC2 instances, auto-scaling groups, or Kubernetes clusters for deployment.
+   - Configures instance types, availability zones, and scaling policies.
+
+3. **Database Module**:
+
+   - Manages cloud database services (e.g., AWS RDS, Google Cloud SQL).
+   - Configures database clusters, backup policies, and scaling options.
+
+4. **Secrets Management Module**:
+   - Integrates with secret management systems (e.g., AWS Secrets Manager, Azure Key Vault).
+   - Ensures secure storage and access to sensitive data (e.g., database credentials).
+
+---
+
+#### 10.2.2. Parameter Store & Secrets Management
+
+The **Parameter Store** (or Secrets Manager) will be used for managing configuration values and sensitive data such as API keys, database credentials, and environment-specific variables. Parameter Store provides a secure, centralized place to store and manage configuration settings, which can be easily referenced by applications and infrastructure components at runtime.
+
+- **Purpose**: To securely store configuration values and secrets, ensuring that sensitive data is not hardcoded in source code or configuration files.
+- **Tools**: For AWS, **AWS Systems Manager Parameter Store** will be used; for GCP, **Google Secret Manager** will be utilized; for Azure, **Azure Key Vault** will be the choice.
+- **Encryption**: All parameters and secrets will be encrypted using strong encryption keys (e.g., AWS KMS, Google Cloud KMS).
+
+##### Examples of Parameters and Secrets Stored:
+
+- **Environment Variables**: E.g., database connection strings, API keys.
+- **Sensitive Configuration**: E.g., admin credentials, encryption keys.
+- **Database Credentials**: E.g., RDS login information or Redis authentication tokens.
+
+##### Integration with Terraform:
+
+Terraform can also manage the deployment of these parameters and secrets using the appropriate provider's integration. For example:
+
+- **AWS Secrets Manager Example**:
+
+```hcl
+  resource "aws_secretsmanager_secret" "db_password" {
+    name = "db_password"
+  }
+
+  resource "aws_secretsmanager_secret_version" "db_password_version" {
+    secret_id     = aws_secretsmanager_secret.db_password.id
+    secret_string = "your-db-password-here"
+  }
+```
+
+- **AWS SSM Parameter Store Example**:
+
+```hcl
+  resource "aws_ssm_parameter" "db_host" {
+  name  = "/app/db/host"
+  type  = "SecureString"
+  value = "db.example.com"
+  key_id = "alias/aws/ssm"
+  }
+
+```
+By using Terraform to manage parameters and secrets, configurations become versioned and can be applied in a consistent manner across all environments.
+
+---
+
+### 10.2.3
+
+In addition to using IaC for infrastructure provisioning, configuration management tools can be used to manage application settings, dependencies, and environment-specific configurations. Tools like Ansible, Chef, or Puppet can be integrated to configure virtual machines or Kubernetes clusters after infrastructure deployment.
+- Environment-specific configurations: Each environment (Development, Staging, Production) may have specific configurations that need to be handled, such as database credentials or API keys.
+- Version-controlled configuration files: All configuration files should be stored in version-controlled repositories to track changes and ensure consistency across environments.
+
+---
+By utilizing Terraform modules and parameter stores for managing infrastructure and configuration, this approach ensures that the application can scale easily, maintain consistency across environments, and minimize errors due to misconfigured infrastructure or sensitive data mishandling. With infrastructure versioned alongside application code, the deployment process becomes fully automated, improving both reliability and agility.
+
+### 10.3. CI/CD Pipelines
+
+Continuous Integration and Continuous Deployment (CI/CD) are vital practices in modern software development, enabling the automation of build, testing, and deployment processes. By implementing CI/CD pipelines, the password manager application can ensure faster development cycles, higher-quality code, and automated deployment across various environments.
+
+---
+
+#### 10.3.1. CI/CD Flow
+
+The CI/CD pipeline for the password manager application will consist of the following stages:
+
+1. **Build**:
+   - Triggered automatically on code push or merge to the repository.
+   - The build step compiles the application, installs dependencies, and ensures that all components are properly integrated.
+   - For frontend components, this step will include bundling JavaScript and CSS. For backend, it includes compiling code and preparing artifacts for deployment.
+
+2. **Test**:
+   - Automated unit and integration tests will run to verify that the application's functionality works as expected.
+   - For backend, tests will be executed to ensure API functionality, security, and database interactions are correct. For frontend, tests will validate UI components and interactions.
+   - Security and vulnerability scans will also be part of the test stage to ensure compliance with best practices and security standards.
+   - Tools like **Jest**, **Mocha**, **Cypress**, or **Selenium** can be used for automated testing, while **SonarQube** or **OWASP Dependency-Check** can be utilized for static code analysis and security vulnerability scanning.
+
+3. **Deploy**:
+   - On successful test completion, the deployment pipeline is triggered.
+   - For **Development Environment**: Automatically deploy the latest version to a dev server or cloud service for further manual or automated testing.
+   - For **Staging Environment**: A staging environment will mimic production as closely as possible. Deployments here will go through acceptance tests and validation before production.
+   - For **Production Environment**: Production deployments will have stricter controls with approval gates in place.
+   - **Approval Gates**: Human approval may be required before deploying to staging or production environments, ensuring that any changes are reviewed before they are pushed live.
+
+---
+
+#### 10.3.2. CI/CD Tools and Technologies
+
+- **CI/CD Platform**: The choice of CI/CD platform can include Jenkins, GitHub Actions, GitLab CI, CircleCI, or Bitbucket Pipelines. These platforms allow for automated execution of the pipeline and offer integrations with version control systems (e.g., GitHub, GitLab).
+
+  - **GitHub Actions Example**:
+    - Configure workflows that automatically trigger build and test pipelines on each pull request or commit.
+    - Utilize jobs and steps for each part of the pipeline, such as installing dependencies, running tests, and deploying.
+
+  - **GitLab CI Example**:
+    - Define a `.gitlab-ci.yml` file with stages like `build`, `test`, `deploy`.
+    - Include scripts to deploy to Kubernetes clusters or cloud infrastructure.
+
+- **Containerization**:
+  - **Docker** will be used to package the application into containers to ensure consistency between development, staging, and production environments.
+  - CI pipelines will build Docker images for both frontend and backend, ensuring the latest application code is packaged with all necessary dependencies.
+
+- **Cloud Providers**:
+  - **AWS** (via services like ECS, EKS, or Lambda), **Google Cloud**, or **Azure** will be used for hosting and deploying the application.
+  - The pipelines will integrate with the chosen cloud provider's services, such as deploying to ECS (Elastic Container Service) or Kubernetes for orchestration.
+
+---
+
+#### 10.3.3. Deployment Strategies
+
+- **Blue/Green Deployment**: This strategy will be used to ensure zero downtime during production deployments. One version of the app (Blue) will be live, while the new version (Green) is deployed in parallel. Once validated, traffic is switched from Blue to Green.
+
+- **Canary Releases**: A gradual deployment approach where new versions of the application are rolled out to a small percentage of users first. This helps identify potential issues without impacting the entire user base.
+
+- **Rolling Deployments**: For environments with high traffic, rolling deployments will be implemented to ensure that updates are applied incrementally, minimizing disruption.
+
+---
+
+#### 10.3.4. Approval & Manual Interventions
+
+For certain steps in the CI/CD pipeline (especially for production deployments), **manual approval** gates can be added. These gates ensure that a senior developer or administrator reviews the changes before they are pushed to production. This minimizes the risk of errors and enhances the quality assurance process.
+
+- **Staging Approval**: After successful deployment to staging, an approval gate can ensure that the staging environment passes all acceptance tests before promoting the build to production.
+
+- **Production Approval**: The final production deployment step can require an approval from a designated stakeholder, ensuring that the release is thoroughly reviewed and validated before being deployed to users.
+
+---
+
+#### 10.3.5. Notifications and Alerts
+
+To keep the development and operations teams informed, the CI/CD pipeline will send notifications for the following events:
+
+- **Build Failures**: Alerts will be sent to the development team when a build fails, specifying which step failed (e.g., compilation, tests, security scans).
+
+- **Test Failures**: Notifications will be triggered when unit, integration, or security tests fail, providing details on which tests did not pass.
+
+- **Deployment Success/Failure**: After deployments to staging or production, notifications will inform teams of success or failure, providing logs and other pertinent details.
+
+- **Manual Approval Pending**: If manual intervention is required (e.g., approval for staging or production deployments), an alert will notify the designated approvers.
+
+---
+
+#### 10.3.6. Pipeline Example
+
+Here’s an example pipeline flow in **GitLab CI** using `.gitlab-ci.yml`:
+
+```yaml
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker build -t password-manager-app .
+    - docker push myregistry/password-manager-app
+
+test:
+  stage: test
+  script:
+    - docker run myregistry/password-manager-app npm run test
+    - docker run myregistry/password-manager-app npm run lint
+
+deploy_staging:
+  stage: deploy
+  script:
+    - kubectl apply -f k8s/staging.yaml
+  environment: staging
+  when: manual
+  only:
+    - main
+
+deploy_production:
+  stage: deploy
+  script:
+    - kubectl apply -f k8s/production.yaml
+  environment: production
+  when: manual
+  only:
+    - main
+```
+
+## 11. Testing Strategy
+
+A comprehensive testing strategy will be employed to ensure the quality, reliability, and security of the password manager application. This includes unit testing, integration testing, and security testing to cover both the functional and non-functional aspects of the application.
+
+---
+
+### 11.1. Unit Tests
+
+**Unit tests** are essential for verifying the individual components of the application in isolation, ensuring that each part of the system behaves as expected.
+
+#### 11.1.1. Coverage Targets
+
+- **Goal**: Aim for a minimum of 80% code coverage across key modules to ensure that the core functionality is thoroughly tested.
+- **Priority Areas**:
+  - **Authentication**: Register, login, password reset, and user management logic.
+  - **Vault Management**: Create, read, update, and delete (CRUD) operations for vault entries.
+  - **Encryption**: Functions related to encryption and decryption using AES-256-GCM and key derivation with Argon2.
+  - **Session Management**: Functions managing user sessions and token handling.
+  - **Validation**: Ensure proper validation of inputs (e.g., password strength, username format).
+
+#### 11.1.2. Key Modules
+
+- **Auth Module**: Tests for successful registration, login, password reset, and failed authentication attempts.
+- **Vault Module**: Tests for creating, updating, reading, and deleting vault entries.
+- **Encryption Module**: Ensure that encryption and decryption methods are working as intended.
+- **User Management Module**: Tests for user creation, role assignment, and permission enforcement.
+- **Error Handling**: Verify that errors are correctly thrown and handled (e.g., invalid inputs, unauthorized access).
+
+---
+
+### 11.2. Integration Tests
+
+**Integration tests** verify the interactions between different components of the application, ensuring that they work together as expected.
+
+#### 11.2.1. End-to-End Flows
+
+- **Authentication Flow**: Test the complete flow of registering a new user, logging in, and retrieving authentication tokens. This will also test user session creation and expiration.
+- **Vault CRUD Flow**: Simulate creating, updating, and deleting vault entries. Ensure that data is properly stored and retrieved from the database, and that the encryption/decryption process works end-to-end.
+- **Sharing Flow**: Test the ability to share vault entries with other users, including permission checks and ensuring that the shared data is properly encrypted and accessible only by the intended users.
+- **Role-Based Access Control (RBAC)**: Verify that different user roles (e.g., admin, regular user) have the appropriate access to different resources (e.g., vault entries, user management).
+
+#### 11.2.2. Encryption Sanity
+
+- **Test Encryption/Decryption**: Ensure that encryption and decryption work across different modules. Test encrypted data storage and ensure that it can only be decrypted by the rightful user.
+- **Cross-Platform Encryption**: Verify that encryption and decryption processes function consistently across different environments (e.g., local, staging, production).
+
+---
+
+### 11.3. Security Tests
+
+Security testing will be a critical part of the testing strategy to ensure that the application is robust against common threats and vulnerabilities.
+
+#### 11.3.1. Static Analysis
+
+- **Tools**: Use static analysis tools such as **SonarQube** or **ESLint** to check for common security flaws like SQL injection, XSS vulnerabilities, and insecure data handling in code.
+- **Code Review**: Regular code reviews should be conducted, with an emphasis on identifying potential security issues like hardcoded credentials, improper error handling, or insecure API calls.
+
+#### 11.3.2. Penetration Testing
+
+- **Scope**: Conduct penetration testing to simulate attacks such as SQL injection, XSS, CSRF, and brute-force login attempts.
+- **Tools**: Use automated penetration testing tools like **OWASP ZAP**, **Burp Suite**, or **Nikto** to identify common vulnerabilities in the application.
+- **Manual Testing**: Manual security testing will be performed to simulate real-world attack vectors that automated tools may miss, such as session hijacking or privilege escalation.
+
+#### 11.3.3. Dependency Scans
+
+- **Security Dependencies**: Use tools like **OWASP Dependency-Check** or **Snyk** to scan project dependencies for known security vulnerabilities.
+- **Patch Management**: Ensure that any vulnerabilities found in dependencies are addressed promptly by updating or replacing insecure libraries.
+
+---
+
+### 11.4. Testing Tools and Frameworks
+
+- **Unit Testing**: Use frameworks like **Jest**, **Mocha**, or **Jasmine** for JavaScript/Node.js unit testing. For backend testing, **CUnit** or **Google Test** could be used in C.
+- **Integration Testing**: Use **Supertest** for API testing to simulate HTTP requests and responses for the REST API. Additionally, **Postman** or **Insomnia** can be used for manual API testing during development.
+- **Security Testing**: Use **OWASP ZAP**, **Burp Suite**, **Snyk**, and **Nikto** for automated penetration tests, vulnerability scanning, and dependency checks.
+- **CI/CD Integration**: Integrate all testing into the CI/CD pipeline using tools like **Jenkins**, **GitHub Actions**, or **GitLab CI** to ensure that tests run automatically during each build and deployment.
+
+---
+
+### 11.5. Reporting & Metrics
+
+- **Test Reports**: Generate detailed test reports after each test run. This includes pass/fail status, error logs, and performance metrics.
+- **Test Coverage Metrics**: Use code coverage tools such as **Istanbul** or **Jest Coverage** to report on test coverage, ensuring that key areas of the application are adequately tested.
+- **Security Testing Reports**: Detailed reports from static analysis, penetration tests, and dependency scans should be generated, highlighting any vulnerabilities found and their severity.
+
+---
+
+### 11.6. Performance Testing (Optional but recommended)
+
+- **Load Testing**: Simulate heavy usage with tools like **Apache JMeter** or **Locust** to test the system's behavior under load and identify potential bottlenecks.
+- **Stress Testing**: Push the system to its limits to evaluate how it performs under extreme conditions and ensure graceful degradation of service.
+
+By ensuring comprehensive testing across these levels, the password manager application will not only meet functional requirements but also provide a secure, reliable, and high-performance solution.
+
+
+## 12. Glossary
+
+Defines every acronym, technical term, and domain-specific concept referenced in this document to prevent misinterpretations and ensure operational precision.
+
+---
+
+### Acronyms
+
+| Acronym | Full Form | Description |
+|:-------:|:----------|:------------|
+| API | Application Programming Interface | Interface that enables communication between different software components via defined protocols. |
+| AES | Advanced Encryption Standard | Symmetric encryption standard used globally to secure sensitive data; AES-256 is a 256-bit key version. |
+| RBAC | Role-Based Access Control | Access control method where system permissions are assigned based on the user's role. |
+| MFA | Multi-Factor Authentication | Security process requiring two or more verification methods to authenticate a user. |
+| HSM | Hardware Security Module | Physical device dedicated to securely managing, processing, and storing cryptographic keys. |
+| RLS | Row-Level Security | Database feature that enforces access control policies at the individual record (row) level. |
+| TOTP | Time-based One-Time Password | Temporary passcode generated based on time, typically used in MFA systems. |
+| IAM | Identity and Access Management | Policies and technologies to ensure appropriate access to technology resources. |
+| HMAC | Hash-based Message Authentication Code | Cryptographic technique combining a secret key with a hash function for message authentication. |
+| CI/CD | Continuous Integration / Continuous Deployment | DevOps practice automating integration, testing, and delivery of code changes. |
+| SLA | Service Level Agreement | Formalized agreement outlining expected service performance and responsibilities between provider and user. |
+| OWASP | Open Worldwide Application Security Project | Organization focused on improving software security through community-led projects. |
+| STRIDE | Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege | Threat modeling framework classifying security risks. |
+| KMS | Key Management Service | Managed service for creating, controlling, and rotating cryptographic keys. |
+| JWT | JSON Web Token | Compact URL-safe token format used for securely transmitting information between parties as a JSON object. |
+| CSP | Content Security Policy | HTTP header that mitigates cross-site scripting and other code injection attacks. |
+| SSRF | Server-Side Request Forgery | Attack allowing malicious users to make requests from the server-side application. |
+
+---
+
+### Domain Terms
+
+| Term | Description |
+|------|-------------|
+| Vault | Encrypted logical container holding user credentials, notes, and sensitive data, accessible only via a master key. |
+| Vault Entry | Individual credential or note stored in the vault; minimally contains metadata (title, username, URL) and secret data (password, notes). |
+| Shared Vault | Mechanism enabling users to securely delegate access to specific vault entries or folders to other users under fine-grained permissions. |
+| Audit Log | Immutable record of all significant user and system actions (login, CRUD operations, sharing, administrative changes), timestamped and IP-addressed. |
+| Master Key | High-entropy key derived client-side from user credentials (password + salt) using a KDF (e.g., Argon2), used for encrypting all vault data. |
+| Zero-Knowledge Architecture | System design principle ensuring the server never possesses any unencrypted user secrets or master keys at any point. |
+| Session | Authenticated state initiated post-login, represented through a signed and time-limited token, used for request authorization. |
+| Backup Codes | One-time static recovery codes generated at MFA enrollment, intended for authentication fallback if the primary MFA device is unavailable. |
+| Folder | Organizational construct grouping multiple vault entries; optional hierarchy for better vault management. |
+| Tag | Flexible metadata label assigned to entries for categorization, search, and filtering purposes. |
+| Key Rotation | Process of generating new encryption keys and re-encrypting data periodically or after exposure to limit potential damage. |
+| Rate Limiting | Defense mechanism that restricts the number of requests a client can make to an API within a specified timeframe to mitigate abuse. |
+| Data-at-Rest Encryption | Encryption applied to stored data (e.g., database entries, backups) to protect it from unauthorized access. |
+| Data-in-Transit Encryption | Encryption applied to data being transmitted over networks (e.g., HTTPS/TLS) to prevent interception or tampering. |
+| Recovery Flow | Secure process allowing users to regain account access through validated recovery methods in case of forgotten passwords or lost MFA devices. |
+| Parameter Store | Centralized, secure storage of configuration values and secrets used during application deployment and operation. |
+| Terraform | Infrastructure as Code (IaC) tool used to define and provision infrastructure using declarative configuration files. |
+| Static Analysis | Automated process analyzing code without executing it to find security vulnerabilities, code smells, and bugs. |
+| Penetration Testing | Simulated cyberattack on an application or system to evaluate its security posture. |
+| Dependency Scanning | Security assessment method that identifies vulnerabilities in third-party libraries and packages used by the application. |
+| Content Security Policy (CSP) | Security standard that helps detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. |
+
+---
+
+## 13. References
+
+This section consolidates all external and internal references critical for the design, development, security, and maintenance of the Password Manager application. It includes standards, specifications, libraries, tools, and internal best practices.
+
+---
+
+### Standards & Specifications
+
+- [OWASP Top Ten Web Application Security Risks](https://owasp.org/www-project-top-ten/)
+- [NIST SP 800-63B Digital Identity Guidelines](https://pages.nist.gov/800-63-3/sp800-63b.html)
+- [NIST SP 800-38D: Galois/Counter Mode (GCM)](https://csrc.nist.gov/publications/detail/sp/800-38d/final)
+- [RFC 7519: JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519)
+- [RFC 5869: HKDF – Key Derivation Function Based on HMAC](https://datatracker.ietf.org/doc/html/rfc5869)
+- [RFC 6238: TOTP – Time-Based One-Time Password Algorithm](https://datatracker.ietf.org/doc/html/rfc6238)
+- [RFC 5280: X.509 Certificate and CRL Profile](https://datatracker.ietf.org/doc/html/rfc5280)
+- [WCAG 2.1 AA Accessibility Guidelines](https://www.w3.org/TR/WCAG21/)
+- [ISO/IEC 27001 Information Security Management](https://www.iso.org/isoiec-27001-information-security.html)
+
+---
+
+### Cryptography & Security Libraries
+
+- [libsodium](https://libsodium.gitbook.io/doc/) — Modern cryptographic library.
+- [argon2-cffi](https://argon2-cffi.readthedocs.io/en/stable/) — Password hashing with Argon2.
+- [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) — JWT creation and verification.
+- [bcrypt.js](https://github.com/dcodeIO/bcrypt.js) — Password hashing for Node.js (authentication fallback).
+- [crypto-js](https://github.com/brix/crypto-js) — AES encryption for browser-side encryption/decryption.
+
+---
+
+### Backend Dependencies
+
+- [Node.js](https://nodejs.org/en) — JavaScript runtime environment.
+- [Express.js](https://expressjs.com/) — Web framework for Node.js.
+- [Prisma ORM](https://www.prisma.io/) — Type-safe database client.
+- [PostgreSQL](https://www.postgresql.org/) — Relational database.
+- [Zod](https://zod.dev/) — Schema validation for API inputs and outputs.
+- [helmet](https://github.com/helmetjs/helmet) — HTTP headers security middleware.
+- [cors](https://github.com/expressjs/cors) — CORS configuration middleware.
+- [rate-limiter-flexible](https://github.com/animir/node-rate-limiter-flexible) — Rate limiting and throttling library.
+- [jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) — Authentication tokens.
+
+---
+
+### Frontend Dependencies
+
+- [React.js](https://react.dev/) — Frontend library.
+- [Next.js](https://nextjs.org/) — React framework for server-side rendering and static generation.
+- [TailwindCSS](https://tailwindcss.com/) — Utility-first CSS framework.
+- [react-hook-form](https://react-hook-form.com/) — Forms and validation management.
+- [axios](https://axios-http.com/) — HTTP client for API communication.
+- [react-query](https://tanstack.com/query/latest) — Server state management.
+- [zxcvbn](https://github.com/dropbox/zxcvbn) — Password strength estimation.
+
+---
+
+### Infrastructure & DevOps Tools
+
+- [Docker](https://www.docker.com/) — Containerization platform.
+- [Docker Compose](https://docs.docker.com/compose/) — Multi-container orchestration.
+- [Terraform](https://developer.hashicorp.com/terraform) — Infrastructure as Code (IaC).
+- [AWS ECS/EKS](https://aws.amazon.com/ecs/) — Deployment platforms.
+- [AWS RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/) — Managed PostgreSQL database.
+- [AWS KMS](https://aws.amazon.com/kms/) — Key Management Service for encryption keys.
+- [Vault by HashiCorp](https://www.vaultproject.io/) — Secrets management (optional future integration).
+- [GitHub Actions](https://github.com/features/actions) — CI/CD pipeline automation.
+
+---
+
+### Testing Tools
+
+- [Jest](https://jestjs.io/) — Unit and integration testing framework.
+- [Supertest](https://github.com/ladjs/supertest) — HTTP assertions for API testing.
+- [OWASP ZAP](https://www.zaproxy.org/) — Dynamic Application Security Testing (DAST).
+- [Snyk](https://snyk.io/) — Dependency and container vulnerability scanner.
+- [ESLint](https://eslint.org/) — Code linting.
+- [Prettier](https://prettier.io/) — Code formatting.
+
+---
+
+### Internal Best Practices (to be documented)
+
+- Secure Development Lifecycle (SDLC) guidelines.
+- Internal password complexity and rotation policies.
+- Role-based access control (RBAC) model documentation.
+- Incident response plan.
+- Data retention and audit log storage policies.
+
+

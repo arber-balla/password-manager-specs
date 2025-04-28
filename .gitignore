@@ -1,0 +1,19 @@
+# Node artifacts (if any tooling is later added)
+node_modules/
+dist/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor/IDE artifacts
+.idea/
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Generated diagrams or exports
+/diagrams/*.png
+/diagrams/*.svg
