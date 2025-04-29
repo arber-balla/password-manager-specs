@@ -5,52 +5,208 @@ This project stems from a student’s need to demonstrate modern software engine
 
 ## Abstract Document Outline
 
-1. [Introduction](#1-introduction)
-2. [System Overview](#2-system-overview)
-3. [Functional Requirements](#3-functional-requirements)
-    - [3.1 User Management](#31-user-management)
-    - [3.2 Vault Operations](#32-vault-operations)
-    - [3.3 Encryption/Decryption](#33-encryptiondecryption)
-    - [3.4 Sharing & Collaboration](#34-sharing-collaboration)
-    - [3.5 Audit & Logging](#35-audit-logging)
-4. [Non-Functional Requirements](#4-non-functional-requirements)
-    - [4.1 Security](#41-security)
-    - [4.2 Performance](#42-performance)
-    - [4.3 Scalability](#43-scalability)
-    - [4.4 Availability & Reliability](#44-availability-reliability)
-    - [4.5 Maintainability](#45-maintainability)
-5. [System Architecture](#5-system-architecture)
-    - [5.1 Component Diagram](#51-component-diagram)
-    - [5.2 Data Flow](#52-data-flow)
-    - [5.3 Deployment Topology](#53-deployment-topology)
-6. [Data Model](#6-data-model)
-    - [6.1 Entities](#61-entities)
-    - [6.2 Attributes & Constraints](#62-attributes-constraints)
-    - [6.3 Relationships](#63-relationships)
-7. [API Specification](#7-api-specification)
-    - [7.1 Endpoint Catalog](#71-endpoint-catalog)
-    - [7.2 Rate Limiting & Throttling](#72-rate-limiting-throttling)
-    - [7.3 Versioning Strategy](#73-versioning-strategy)
-8. [User Interface Specification](#8-user-interface-specification)
-    - [8.1 Visual Design](#81-visual-design)
-    - [8.2 UI Flows](#82-ui-flows)
-    - [8.3 Page Wireframes](#83-page-wireframes)
-    - [8.4 Component Catalogue](#84-component-catalogue)
-    - [8.5 Accessibility Requirements](#85-accessibility-requirements)
-9. [Security Model](#9-security-model)
-    - [9.1 Threat Model](#91-threat-model)
-    - [9.2 Key Management](#92-key-management)
-    - [9.3 MFA & Recovery](#93-mfa-recovery)
-10. [Infrastructure & Deployment](#10-infrastructure-deployment)
-    - [10.1 Environments](#101-environments)
-    - [10.2 IaC & Configuration](#102-iac-configuration)
-    - [10.3 CI/CD Pipelines](#103-cicd-pipelines)
-11. [Testing Strategy](#11-testing-strategy)
-    - [11.1 Unit Tests](#111-unit-tests)
-    - [11.2 Integration Tests](#112-integration-tests)
-    - [11.3 Security Tests](#113-security-tests)
-12. [Glossary](#12-glossary)
-13. [References](#13-references)
+- [Abstract](#1-abstract)
+    - [1. Stakeholders & Responsibilities](#12-1-stakeholders--responsibilities)
+        - [1.1. Student Developer (Project Owner)](#121-11-student-developer-project-owner)
+        - [1.2. Frontend Engineer (Role Simulated)](#122-12-frontend-engineer-role-simulated)
+        - [1.3. Backend Engineer (Role Simulated)](#123-13-backend-engineer-role-simulated)
+        - [1.4. DevOps Engineer (Role Simulated)](#124-14-devops-engineer-role-simulated)
+        - [1.5. Security Reviewer (Role Simulated)](#125-15-security-reviewer-role-simulated)
+        - [1.6. UI/UX Designer (Role Simulated)](#126-16-uiux-designer-role-simulated)
+        - [1.7. Stakeholder Proxy (e.g., Peer Reviewers, Mentors)](#127-17-stakeholder-proxy-eg-peer-reviewers-mentors)
+    - [2. Document Purpose](#13-2-document-purpose)
+        - [2.1 Role in development](#131-21-role-in-development)
+    - [3. Application Overview](#14-3-application-overview)
+        - [3.1. Vision and Scope](#141-31-vision-and-scope)
+        - [3.2. High-Level Features](#142-32-high-level-features)
+    - [4. Project Plan](#15-4-project-plan)
+        - [4.1. Milestones & Timeline](#151-41-milestones--timeline)
+        - [4.2. Resources & Budget](#152-42-resources--budget)
+        - [4.3. Assumptions](#153-43-assumptions)
+        - [4.4. Constraints](#154-44-constraints)
+    - [5 Functional Requirements](#16-5-functional-requirements)
+    - [5.1 User Management](#17-51-user-management)
+        - [5.1.1 Register](#171-511-register)
+        - [5.1.2 Login](#172-512-login)
+        - [5.1.3 Password Reset Flow](#173-513-password-reset-flow)
+        - [5.1.4 Roles and Permissions](#174-514-roles-and-permissions)
+        - [5.1.5 General Security Measures Across User Management](#175-515-general-security-measures-across-user-management)
+    - [5.2 Vault Operations](#18-52-vault-operations)
+        - [5.2.1 Create Vault Entry](#181-521-create-vault-entry)
+        - [5.2.2 Read Vault Entries](#182-522-read-vault-entries)
+        - [5.2.3 Update Vault Entry](#183-523-update-vault-entry)
+        - [5.2.4 Delete Vault Entry](#184-524-delete-vault-entry)
+        - [5.2.5 Folder Organization](#185-525-folder-organization)
+        - [5.2.6 Tag Organization](#186-526-tag-organization)
+        - [5.2.7 General Security Measures Across Vault Operations](#187-527-general-security-measures-across-vault-operations)
+    - [5.3 Encryption/Decryption](#19-53-encryptiondecryption)
+        - [5.3.1 Client-Side AES-256-GCM Usage](#191-531-client-side-aes-256-gcm-usage)
+        - [5.3.2 Key Derivation via Argon2](#192-532-key-derivation-via-argon2)
+        - [5.3.3 Zero-Knowledge Guarantee](#193-533-zero-knowledge-guarantee)
+    - [5.5 Audit & Logging](#110-55-audit--logging)
+        - [5.5.1 Purpose](#1101-551-purpose)
+        - [5.5.2 Scope of Logged Events](#1102-552-scope-of-logged-events)
+        - [5.5.3 Logged Metadata for Each Event](#1103-553-logged-metadata-for-each-event)
+        - [5.5.4 Storage and Retention](#1104-554-storage-and-retention)
+        - [5.5.5 Access Control and Privacy](#1105-555-access-control-and-privacy)
+        - [5.5.6 Compliance and Best Practices](#1106-556-compliance-and-best-practices)
+    - [6. Non-Functional Requirements (In the future!)](#111-6-non-functional-requirements-in-the-future)
+    - [6.1 Security](#112-61-security)
+        - [6.1.1 OWASP Top 10 Mitigations](#1121-611-owasp-top-10-mitigations)
+        - [6.1.2 Data-at-Rest Encryption](#1122-612-data-at-rest-encryption)
+        - [6.1.3 Data-in-Transit Encryption](#1123-613-data-in-transit-encryption)
+        - [6.1.4 Additional Security Layers](#1124-614-additional-security-layers)
+    - [6.2 Performance](#113-62-performance)
+        - [6.2.1 Target Latency for Vault Read/Write](#1131-621-target-latency-for-vault-readwrite)
+        - [6.2.2 Concurrency Requirements](#1132-622-concurrency-requirements)
+        - [6.2.3 Performance Monitoring](#1133-623-performance-monitoring)
+    - [6.3 Scalability](#114-63-scalability)
+        - [6.3.1 Horizontal Scaling Strategy](#1141-631-horizontal-scaling-strategy)
+    - [6.4 Availability & Reliability](#115-64-availability--reliability)
+        - [6.4.1 SLA Targets](#1151-641-sla-targets)
+        - [6.4.2 Backup and Disaster Recovery](#1152-642-backup-and-disaster-recovery)
+    - [6.5 Maintainability](#116-65-maintainability)
+        - [6.5.1 Code Standards](#1161-651-code-standards)
+        - [6.5.2 Documentation](#1162-652-documentation)
+        - [6.5.3 Automated Checks](#1163-653-automated-checks)
+        - [6.5.4 Version Control & Branching Strategy](#1164-654-version-control--branching-strategy)
+    - [7. Risk Assessment](#117-7-risk-assessment)
+    - [8. System Architecture](#118-8-system-architecture)
+        - [8.1. Technology Stack & Rationale](#1181-81-technology-stack--rationale)
+        - [8.1.1 Front-End](#1182-811-front-end)
+        - [8.1.2 Back-End](#1183-812-back-end)
+        - [8.1.3 Database & ORM](#1184-813-database--orm)
+        - [8.1.4 Cryptography](#1185-814-cryptography)
+        - [8.1.5 Infrastructure & DevOps](#1186-815-infrastructure--devops)
+        - [8.1.6 CI/CD & Testing](#1187-816-cicd--testing)
+        - [8.1.7 Monitoring & Logging](#1188-817-monitoring--logging)
+    - [8.2 Component Diagram](#119-82-component-diagram)
+        - [1. **Front-End (Client-Side Application)**](#1191-1-front-end-client-side-application)
+        - [2. **API Layer (Back-End)**](#1192-2-api-layer-back-end)
+        - [3. **Database**](#1193-3-database)
+        - [4. **Key-Management System (KMS)**](#1194-4-key-management-system-kms)
+        - [5. **Hardware Security Module (HSM) / Vault**](#1195-5-hardware-security-module-hsm--vault)
+        - [Component Interaction:](#1196-component-interaction)
+    - [8.3 Data Flow](#120-83-data-flow)
+        - [1. **Login**](#1201-1-login)
+        - [2. **Key Derivation**](#1202-2-key-derivation)
+        - [3. **Vault Fetch**](#1203-3-vault-fetch)
+        - [4. **Decryption**](#1204-4-decryption)
+        - [Summary of the Data Flow:](#1205-summary-of-the-data-flow)
+    - [8.4 Deployment Topology](#121-84-deployment-topology)
+        - [1. **Docker**](#1211-1-docker)
+        - [2. **Amazon ECS (Elastic Container Service)**](#1212-2-amazon-ecs-elastic-container-service)
+        - [3. **Kubernetes**](#1213-3-kubernetes)
+        - [4. **Environments**](#1214-4-environments)
+        - [5. **CI/CD Pipeline**](#1215-5-cicd-pipeline)
+        - [Summary of Deployment Topology:](#1216-summary-of-deployment-topology)
+    - [9. Data Model](#122-9-data-model)
+        - [9.1 Entities](#1221-91-entities)
+            - [**User**](#12211-user)
+            - [**VaultEntry**](#12212-vaultentry)
+            - [**SharedVault**](#12213-sharedvault)
+            - [**AuditLog**](#12214-auditlog)
+            - [**Session**](#12215-session)
+        - [Summary](#1222-summary)
+        - [9.2 Attributes & Constraints](#1223-92-attributes--constraints)
+            - [**User Entity**](#12231-user-entity)
+            - [**VaultEntry Entity**](#12232-vaultentry-entity)
+            - [**SharedVault Entity**](#12233-sharedvault-entity)
+            - [**AuditLog Entity**](#12234-auditlog-entity)
+            - [**Session Entity**](#12235-session-entity)
+        - [2. **Encryption Columns**](#1224-2-encryption-columns)
+        - [3. **Row-Level Security (RLS) Policies**](#1225-3-row-level-security-rls-policies)
+        - [Summary](#1226-summary)
+        - [9.3 Relationships](#1227-93-relationships)
+            - [**1. One-to-Many Relationship: User → VaultEntry**](#12271-1-one-to-many-relationship-user--vaultentry)
+            - [**2. Many-to-Many Relationship: Vault → User (SharedVault)**](#12272-2-many-to-many-relationship-vault--user-sharedvault)
+            - [**3. One-to-Many Relationship: User → AuditLog**](#12273-3-one-to-many-relationship-user--auditlog)
+            - [**4. One-to-Many Relationship: User → Session**](#12274-4-one-to-many-relationship-user--session)
+            - [**Entity-Relationship (ER) Diagram Overview**](#12275-entity-relationship-er-diagram-overview)
+        - [Summary of Relationships](#1228-summary-of-relationships)
+    - [10. API Specification](#123-10-api-specification)
+        - [10.1. Endpoint Catalog](#1231-101-endpoint-catalog)
+        - [10.2. Rate Limiting & Throttling](#1232-102-rate-limiting--throttling)
+        - [10.3. Versioning Strategy](#1233-103-versioning-strategy)
+    - [11. User Interface Specification](#124-11-user-interface-specification)
+        - [11.1. Design Philosophy](#1241-111-design-philosophy)
+        - [11.2. Core Screens](#1242-112-core-screens)
+        - [11.3. Page Wireframes](#1243-113-page-wireframes)
+            - [Login Page](#12431-login-page)
+            - [Dashboard Page](#12432-dashboard-page)
+            - [Vault Detail Page](#12433-vault-detail-page)
+            - [Settings Page](#12434-settings-page)
+        - [11.4. Component Catalogue](#1244-114-component-catalogue)
+            - [Input Components](#12441-input-components)
+            - [Modal Components](#12442-modal-components)
+            - [Data Display Components](#12443-data-display-components)
+            - [Feedback Components](#12444-feedback-components)
+            - [Layout Components](#12445-layout-components)
+        - [11.5. Accessibility Requirements](#1245-115-accessibility-requirements)
+            - [Perceivable](#12451-perceivable)
+            - [Operable](#12452-operable)
+            - [Understandable](#12453-understandable)
+            - [Robust](#12454-robust)
+    - [12. Security Model](#125-12-security-model)
+        - [12.1. Threat Model](#1251-121-threat-model)
+            - [STRIDE Categories](#12511-stride-categories)
+            - [Attacker Capabilities](#12512-attacker-capabilities)
+        - [12.2. Key Management](#1252-122-key-management)
+            - [12.2.1. Master Key Handling](#12521-1221-master-key-handling)
+            - [12.2.2. Hardware Security Module (HSM) Integration](#12522-1222-hardware-security-module-hsm-integration)
+            - [12.2.3. Key Rotation Policy](#12523-1223-key-rotation-policy)
+            - [12.2.4. Backup & Disaster Recovery](#12524-1224-backup--disaster-recovery)
+        - [12.3. MFA & Recovery](#1253-123-mfa--recovery)
+            - [12.3.1. TOTP Enrollment](#12531-1231-totp-enrollment)
+            - [12.3.2. Backup Codes](#12532-1232-backup-codes)
+            - [12.3.3. Account Recovery Flow](#12533-1233-account-recovery-flow)
+    - [13. Regulatory & Compliance](#126-13-regulatory--compliance)
+        - [13.1 GDPR Compliance](#1261-131-gdpr-compliance)
+        - [13.2 Data Residency & Sovereignty](#1262-132-data-residency--sovereignty)
+        - [13.3 Legal Considerations](#1263-133-legal-considerations)
+    - [14. Infrastructure & Deployment](#127-14-infrastructure--deployment)
+        - [14.1. Environments](#1271-141-environments)
+            - [14.1.1. Development Environment](#12711-1411-development-environment)
+            - [14.1.2. Staging Environment](#12712-1412-staging-environment)
+            - [14.1.3. Production Environment](#12713-1413-production-environment)
+            - [14.1.4. Differences Between Environments](#12714-1414-differences-between-environments)
+        - [14.2. IaC & Configuration](#1272-142-iac--configuration)
+            - [14.2.1. Terraform Modules](#12721-1421-terraform-modules)
+                - [Examples of Terraform Modules:](#127211-examples-of-terraform-modules)
+            - [14.2.2. Parameter Store & Secrets Management](#12722-1422-parameter-store--secrets-management)
+                - [Examples of Parameters and Secrets Stored:](#127221-examples-of-parameters-and-secrets-stored)
+                - [Integration with Terraform:](#127222-integration-with-terraform)
+        - [14.2.3](#1273-1423)
+        - [14.3. CI/CD Pipelines](#1274-143-cicd-pipelines)
+            - [14.3.1. CI/CD Flow](#12741-1431-cicd-flow)
+            - [14.3.2. CI/CD Tools and Technologies](#12742-1432-cicd-tools-and-technologies)
+            - [14.3.3. Deployment Strategies](#12743-1433-deployment-strategies)
+            - [14.3.4. Approval & Manual Interventions](#12744-1434-approval--manual-interventions)
+            - [14.3.5. Notifications and Alerts](#12745-1435-notifications-and-alerts)
+            - [14.3.6. Pipeline Example](#12746-1436-pipeline-example)
+    - [15. Testing Strategy](#128-15-testing-strategy)
+        - [15.1. Unit Tests](#1281-151-unit-tests)
+            - [15.1.1. Coverage Targets](#12811-1511-coverage-targets)
+            - [15.1.2. Key Modules](#12812-1512-key-modules)
+        - [15.2. Integration Tests](#1282-152-integration-tests)
+            - [15.2.1. End-to-End Flows](#12821-1521-end-to-end-flows)
+            - [15.2.2. Encryption Sanity](#12822-1522-encryption-sanity)
+        - [15.3. Security Tests](#1283-153-security-tests)
+            - [15.3.1. Static Analysis](#12831-1531-static-analysis)
+            - [15.3.2. Penetration Testing](#12832-1532-penetration-testing)
+            - [15.3.3. Dependency Scans](#12833-1533-dependency-scans)
+        - [15.4. Testing Tools and Frameworks](#1284-154-testing-tools-and-frameworks)
+        - [15.5. Reporting & Metrics](#1285-155-reporting--metrics)
+        - [15.6. Performance Testing (Optional but recommended)](#1286-156-performance-testing-optional-but-recommended)
+    - [16. Glossary](#129-16-glossary)
+    - [17. References](#130-17-references)
+        - [Standards & Specifications](#1301-standards--specifications)
+        - [Cryptography & Security Libraries](#1302-cryptography--security-libraries)
+        - [Backend Dependencies](#1303-backend-dependencies)
+        - [Frontend Dependencies](#1304-frontend-dependencies)
+        - [Infrastructure & DevOps Tools](#1305-infrastructure--devops-tools)
+        - [Testing Tools](#1306-testing-tools)
+        - [Internal Best Practices (to be documented)](#1307-internal-best-practices-to-be-documented)
 
 ## 1. Stakeholders & Responsibilities
 
@@ -200,32 +356,32 @@ This section outlines the structured roadmap for building the Password Manager a
 
 ### 4.1. Milestones & Timeline
 
-| Phase                            | Deliverables                                      | Target Duration     |
-|----------------------------------|---------------------------------------------------|---------------------|
-| Requirements Specification       | Finalized abstract, user stories, data model     | Week 1              |
-| System Architecture              | Component diagrams, data flow, deployment topo   | Week 3              |
-| Frontend Skeleton                | React setup, routing, page scaffolding           | Week 5              |
-| Backend API Foundation           | Auth flows, RESTful API, DB schema (PostgreSQL)  | Week 7              |
-| Core Vault Functionality         | Vault CRUD, encryption, Argon2 key derivation    | Week 9              |
-| Sharing & Permissions            | RBAC, shared vault logic                         | Week 11              |
-| Testing Suite Implementation     | Unit, integration, security tests                | Week 13             |
-| CI/CD & Deployment               | Docker, GitHub Actions, test deployment          | Week 15              |
-| UI Finalization & Styling       | Responsive components, accessibility adherence   | Week 17              |
-| Security Hardening               | STRIDE, MFA, rate limiting, audit logs           | Week 19             |
-| Documentation Finalization       | README, specs, glossaries, diagrams              | Week 21             |
-| Final Review & Polishing         | Bug fixes, test coverage review                  | Week 23             |
+| Phase                        | Deliverables                                    | Target Duration |
+|------------------------------|-------------------------------------------------|-----------------|
+| Requirements Specification   | Finalized abstract, user stories, data model    | Week 1          |
+| System Architecture          | Component diagrams, data flow, deployment topo  | Week 3          |
+| Frontend Skeleton            | React setup, routing, page scaffolding          | Week 5          |
+| Backend API Foundation       | Auth flows, RESTful API, DB schema (PostgreSQL) | Week 7          |
+| Core Vault Functionality     | Vault CRUD, encryption, Argon2 key derivation   | Week 9          |
+| Sharing & Permissions        | RBAC, shared vault logic                        | Week 11         |
+| Testing Suite Implementation | Unit, integration, security tests               | Week 13         |
+| CI/CD & Deployment           | Docker, GitHub Actions, test deployment         | Week 15         |
+| UI Finalization & Styling    | Responsive components, accessibility adherence  | Week 17         |
+| Security Hardening           | STRIDE, MFA, rate limiting, audit logs          | Week 19         |
+| Documentation Finalization   | README, specs, glossaries, diagrams             | Week 21         |
+| Final Review & Polishing     | Bug fixes, test coverage review                 | Week 23         |
 
 > Total Estimated Time: ~23 weeks (assuming part-time commitment)
 
 ### 4.2. Resources & Budget
 
-| Resource                 | Description                                      | Estimated Cost         |
-|--------------------------|--------------------------------------------------|-------------------------|
-| Development Machine      | Personal laptop, no extra cost                   | €0                      |
-| IDE/Tools                | WebStorm (student license), Postman, Docker     | €0 (student licenses)   |
-| Hosting/Deployment       | GitHub (free tier), optional Vercel/Render       | €0–€10/month if scaled  |
-| Domain (Optional)        | Project-specific domain for demo                 | €10–€20/year            |
-| Time Commitment          | ~10–12 hrs/week for 12 weeks                    | ~120–140 total hrs      |
+| Resource            | Description                                 | Estimated Cost         |
+|---------------------|---------------------------------------------|------------------------|
+| Development Machine | Personal laptop, no extra cost              | €0                     |
+| IDE/Tools           | WebStorm (student license), Postman, Docker | €0 (student licenses)  |
+| Hosting/Deployment  | GitHub (free tier), optional Vercel/Render  | €0–€10/month if scaled |
+| Domain (Optional)   | Project-specific domain for demo            | €10–€20/year           |
+| Time Commitment     | ~10–12 hrs/week for 12 weeks                | ~120–140 total hrs     |
 
 > Budget total: ~€0–€30 (if hosting externally). Core assumption: infrastructure is optional for MVP demonstration.
 
@@ -1135,18 +1291,18 @@ Some of the more advanced features outlined in this document, such as horizontal
 
 This section outlines potential risks that may affect the successful completion of the Password Manager project. Each risk is evaluated based on its likelihood of occurrence, potential impact, and associated mitigation strategy. This exercise is critical to planning for contingencies and ensuring delivery under constraints.
 
-| Risk ID | Risk Description                                  | Likelihood | Impact  | Mitigation Strategy                                                                 |
-|---------|---------------------------------------------------|------------|---------|--------------------------------------------------------------------------------------|
-| R1      | Underestimating technical complexity              | High       | High    | Limit MVP scope initially, research before implementation, iterate in small steps   |
-| R2      | Incomplete knowledge of cryptographic primitives  | Medium     | High    | Study standards (e.g., AES-GCM, Argon2), verify with community-accepted libraries   |
-| R3      | Time constraints due to academic workload         | High       | Medium  | Plan weekly time blocks, keep progress modular, avoid scope creep                   |
-| R4      | Toolchain misconfiguration (Docker, CI/CD)        | Medium     | Medium  | Follow official documentation, isolate environments, seek mentor/help if blocked   |
-| R5      | Data loss due to lack of backups                  | Low        | High    | Implement backup scripts locally, use GitHub versioning for source code            |
-| R6      | Insecure implementation of authentication         | Medium     | High    | Follow OWASP guidelines, avoid writing crypto manually, rely on proven libraries    |
-| R7      | Performance degradation under simulated load      | Low        | Medium  | Use indexes, optimize queries, test with dummy data                                 |
-| R8      | Dependency vulnerabilities                        | Medium     | High    | Use `npm audit`, `dependabot`, limit dependency count                               |
-| R9      | Lack of accessibility compliance                  | Medium     | Low     | Use WCAG checklists, integrate contrast/language tools during UI testing           |
-| R10     | Inability to demonstrate scalability features     | Low        | Medium  | Document design choices, simulate horizontal scaling scenarios with diagrams       |
+| Risk ID | Risk Description                                 | Likelihood | Impact | Mitigation Strategy                                                               |
+|---------|--------------------------------------------------|------------|--------|-----------------------------------------------------------------------------------|
+| R1      | Underestimating technical complexity             | High       | High   | Limit MVP scope initially, research before implementation, iterate in small steps |
+| R2      | Incomplete knowledge of cryptographic primitives | Medium     | High   | Study standards (e.g., AES-GCM, Argon2), verify with community-accepted libraries |
+| R3      | Time constraints due to academic workload        | High       | Medium | Plan weekly time blocks, keep progress modular, avoid scope creep                 |
+| R4      | Toolchain misconfiguration (Docker, CI/CD)       | Medium     | Medium | Follow official documentation, isolate environments, seek mentor/help if blocked  |
+| R5      | Data loss due to lack of backups                 | Low        | High   | Implement backup scripts locally, use GitHub versioning for source code           |
+| R6      | Insecure implementation of authentication        | Medium     | High   | Follow OWASP guidelines, avoid writing crypto manually, rely on proven libraries  |
+| R7      | Performance degradation under simulated load     | Low        | Medium | Use indexes, optimize queries, test with dummy data                               |
+| R8      | Dependency vulnerabilities                       | Medium     | High   | Use `npm audit`, `dependabot`, limit dependency count                             |
+| R9      | Lack of accessibility compliance                 | Medium     | Low    | Use WCAG checklists, integrate contrast/language tools during UI testing          |
+| R10     | Inability to demonstrate scalability features    | Low        | Medium | Document design choices, simulate horizontal scaling scenarios with diagrams      |
 
 ---
 
@@ -1911,7 +2067,7 @@ This section defines the relationships between the various entities in the syste
 Below is the textual representation of the Entity-Relationship (ER) diagram for the described relationships:
 
 | Entity      | Attributes                                                                                          | Relationships                                                                                                         |
-| ----------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+|-------------|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | User        | id (PK), email, hashed_password, salt, created_at, updated_at                                       | One-to-Many → VaultEntry<br>One-to-Many → AuditLog<br>One-to-Many → Session<br>Many-to-Many → Vault (via SharedVault) |
 | VaultEntry  | id (PK), user_id (FK), title, username, password (encrypted), notes, folder, created_at, updated_at | Many-to-One → User                                                                                                    |
 | SharedVault | id (PK), vault_id (FK), user_id (FK), permissions, created_at, updated_at                           | Many-to-One → User<br>Many-to-One → Vault                                                                             |
@@ -1944,7 +2100,7 @@ Defines a versioned, RESTful JSON API secured by Bearer tokens and scoped by RBA
 ### 10.1. Endpoint Catalog
 
 | Method | Path                      | Auth Required | Request Schema                              | Response Schema             | Common Errors                           |
-| ------ | ------------------------- | ------------- | ------------------------------------------- | --------------------------- | --------------------------------------- |
+|--------|---------------------------|---------------|---------------------------------------------|-----------------------------|-----------------------------------------|
 | POST   | /auth/register            | No            | email, password                             | success message             | 400 (validation), 409 (conflict)        |
 | POST   | /auth/login               | No            | email, password                             | access_token, refresh_token | 400 (invalid), 401 (unauthorized)       |
 | POST   | /auth/forgot-password     | No            | email                                       | success message             | 400 (validation), 404 (not found)       |
@@ -1975,7 +2131,7 @@ Defines a versioned, RESTful JSON API secured by Bearer tokens and scoped by RBA
 Rate limiting ensures fair use, prevents abuse, and mitigates brute-force attacks. Rules are applied per authenticated user or per IP address for unauthenticated requests.
 
 | Endpoint Group                                | Limit Rule                       | Notes                                             |
-| --------------------------------------------- | -------------------------------- | ------------------------------------------------- |
+|-----------------------------------------------|----------------------------------|---------------------------------------------------|
 | POST /auth/register                           | 5 requests per hour per IP       | Prevent mass account creation                     |
 | POST /auth/login                              | 10 requests per minute per IP    | Mitigate brute-force login attempts               |
 | POST /auth/forgot-password                    | 3 requests per hour per IP       | Control password reset abuse                      |
@@ -1997,7 +2153,7 @@ Rate limiting ensures fair use, prevents abuse, and mitigates brute-force attack
 All API endpoints are namespaced under `/api/v1` to ensure stability and controlled evolution over time.
 
 | Aspect               | Policy                                                                           |
-| -------------------- | -------------------------------------------------------------------------------- |
+|----------------------|----------------------------------------------------------------------------------|
 | Namespace            | `/api/v1/...` for all current endpoints                                          |
 | Breaking Changes     | Introduced only in a new major version (`v2`, `v3`, etc.)                        |
 | Minor Enhancements   | Non-breaking changes (e.g., new optional fields) allowed in `v1`                 |
@@ -2023,7 +2179,7 @@ This section defines the expected structure, behavior, and constraints of the us
 ### 11.2. Core Screens
 
 | Screen                  | Description                                                            | Key Actions                             |
-| ----------------------- | ---------------------------------------------------------------------- | --------------------------------------- |
+|-------------------------|------------------------------------------------------------------------|-----------------------------------------|
 | Landing Page            | Public homepage with app overview and login/register options           | Login, Register navigation              |
 | Registration            | Form to create an account, validate input, strong password suggestions | Submit registration form                |
 | Login                   | Authentication page with "Remember Me" and "Forgot Password" options   | Submit credentials, redirect on success |
@@ -2335,7 +2491,7 @@ This section defines the assumed threat landscape for the Password Manager, foll
 #### STRIDE Categories
 
 | Threat Category             | Description                                | Example Mitigations                                                    |
-| :-------------------------- | :----------------------------------------- | :--------------------------------------------------------------------- |
+|:----------------------------|:-------------------------------------------|:-----------------------------------------------------------------------|
 | **Spoofing**                | Impersonating another user or system.      | Strong authentication (MFA), password policies, session management.    |
 | **Tampering**               | Unauthorized modification of data.         | End-to-end encryption, data integrity checks (GCM tags), RLS policies. |
 | **Repudiation**             | Denying actions without accountability.    | Immutable audit logs with tamper-evident storage.                      |
@@ -2621,7 +2777,7 @@ The **Production** environment is the live environment where the application ser
 #### 14.1.4. Differences Between Environments
 
 | Feature                  | Development           | Staging                                  | Production                                         |
-| ------------------------ | --------------------- | ---------------------------------------- | -------------------------------------------------- |
+|--------------------------|-----------------------|------------------------------------------|----------------------------------------------------|
 | **Purpose**              | Development & Testing | Full integration testing                 | Live user traffic & data                           |
 | **Data**                 | Mock/anonymized data  | Anonymized production data               | Real user data (encrypted)                         |
 | **Security**             | Low security controls | High security controls                   | Full security (SSL, encryption, RBAC)              |
@@ -2956,100 +3112,100 @@ By ensuring comprehensive testing across these levels, the password manager appl
 
 Defines every acronym, technical term, and domain-specific concept referenced in this document to prevent misinterpretations and ensure operational precision.
 
-| Term                          | Definition                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ACID                          | Atomicity, Consistency, Isolation, Durability: set of properties guaranteeing reliable transaction processing in relational databases.                                                                                                                                                                                                                                                                                                                                                                      |
-| Agile                         | Iterative software development methodology emphasizing adaptive planning, continuous feedback, and flexible responses to change (e.g., Scrum, Kanban).                                                                                                                                                                                                                                                                                                                                                |
-| Argon2id                      | Memory-hard key derivation function combining Argon2i and Argon2d modes; resists both side-channel and brute-force attacks for deriving cryptographic keys from passwords.                                                                                                                                                                                                                                                                                                                           |
-| API                           | Application Programming Interface: defined set of rules and protocols enabling communication between software components, often via HTTP/HTTPS in RESTful or GraphQL systems.                                                                                                                                                                                                                                                                                                                         |
-| API Gateway                   | Service that routes client requests to backend services, enforcing security, rate limiting, and protocol translation.                                                                                                                                                                                                                                                                                                                                                                                 |
-| AWS ECS                       | Amazon Elastic Container Service: managed container orchestration service for running Docker containers at scale on AWS, supporting EC2 and Fargate launch types.                                                                                                                                                                                                                                                                                                                                 |
-| Bcrypt                        | Password hashing algorithm based on the Blowfish cipher; includes adaptive work factor to increase computational cost over time.                                                                                                                                                                                                                                                                                                                                                                      |
-| Cache                         | Temporary storage layer (in-memory or distributed) that speeds up data retrieval by storing frequently accessed data (e.g., Redis, Memcached).                                                                                                                                                                                                                                                                                                                                                          |
-| CDN                           | Content Delivery Network: distributed network of servers caching and delivering static assets to users from geographically proximate locations to reduce latency.                                                                                                                                                                                                                                                                                                                                     |
-| CI                            | Continuous Integration: practice of frequently merging developer changes into a shared repository, accompanied by automated tests and builds.                                                                                                                                                                                                                                                                                                                                                            |
-| CI/CD                         | Continuous Integration / Continuous Deployment (or Delivery): automated workflows that build, test, and deploy applications to various environments upon code changes.                                                                                                                                                                                                                                                                                                                                   |
-| CMK                           | Customer Master Key: primary encryption key stored and managed by a KMS or HSM, used to encrypt data encryption keys.                                                                                                                                                                                                                                                                                                                                                                               |
-| CORS                          | Cross-Origin Resource Sharing: browser mechanism controlled via HTTP headers to allow or restrict resource requests from different origins.                                                                                                                                                                                                                                                                                                                                                            |
-| CRUD                          | Create, Read, Update, Delete: basic operations for persistent storage, mapped to HTTP methods POST, GET, PUT/PATCH, and DELETE.                                                                                                                                                                                                                                                                                                                                                                        |
-| CSRF                          | Cross-Site Request Forgery: web vulnerability where unauthorized commands are transmitted from a user trusted by the application.                                                                                                                                                                                                                                                                                                                                                                      |
-| CSP                           | Content Security Policy: HTTP header-based security standard that restricts resource loading sources to mitigate XSS and data injection attacks.                                                                                                                                                                                                                                                                                                                                                      |
-| DevOps                        | Collaboration practice combining software development and IT operations to automate and streamline build, test, and deployment pipelines.                                                                                                                                                                                                                                                                                                                                                                |
-| DevSecOps                     | Integration of security practices into the DevOps lifecycle, emphasizing automated security testing (SAST, DAST) and compliance checks in CI/CD.                                                                                                                                                                                                                                                                                                                                                       |
-| DNS                           | Domain Name System: hierarchical naming system translating human-readable domain names to IP addresses.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| Docker                        | Containerization platform packaging applications and dependencies into portable images for consistent deployment across environments.                                                                                                                                                                                                                                                                                                                                                                    |
-| DDoS                          | Distributed Denial of Service: attack that overwhelms a service with traffic from multiple sources, aiming to disrupt availability.                                                                                                                                                                                                                                                                                                                                                                     |
-| E2EE                          | End-to-End Encryption: encryption model where only communicating endpoints can decrypt messages, preventing intermediaries (including servers) from accessing plaintext.                                                                                                                                                                                                                                                                                                                                  |
-| EC2                           | Amazon Elastic Compute Cloud: scalable virtual server instances in AWS for running applications.                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ELK                           | Elasticsearch, Logstash, Kibana: stack for log ingestion, storage, and visualization.                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Encryption Key                | Secret value derived or generated for cryptographic operations, used to encrypt and decrypt data; includes data encryption keys (DEK) and key encryption keys (KEK).                                                                                                                                                                                                                                                                                                                                    |
-| Eventual Consistency          | Consistency model where updates propagate asynchronously across replicas, leading to temporary discrepancies that converge over time.                                                                                                                                                                                                                                                                                                                                                                   |
-| GCM                           | Galois/Counter Mode: block cipher mode providing authenticated encryption, producing ciphertext and authentication tag.                                                                                                                                                                                                                                                                                                                                                                               |
-| GraphQL                       | Query language and runtime for APIs, enabling clients to request exactly the data they need in a single request.                                                                                                                                                                                                                                                                                                                                                                                      |
-| HMAC                          | Hash-Based Message Authentication Code: mechanism that uses a secret key and hash function to verify message integrity and authenticity.                                                                                                                                                                                                                                                                                                                                                                |
-| HSM                           | Hardware Security Module: dedicated hardware device or cloud service for secure generation, storage, and usage of cryptographic keys without exposing them to the host environment.                                                                                                                                                                                                                                                                                                                     |
-| HTTPS                         | HTTP over TLS/SSL: protocol securing HTTP requests and responses to prevent eavesdropping and tampering.                                                                                                                                                                                                                                                                                                                                                                                               |
-| HTTP/2                        | Updated version of HTTP providing multiplexed streams, header compression (HPACK), and server push to improve performance.                                                                                                                                                                                                                                                                                                                                                                            |
-| IaC                           | Infrastructure as Code: practice of managing infrastructure provisioning and configuration through declarative code definitions (e.g., Terraform).                                                                                                                                                                                                                                                                                                                                                     |
-| IAM                           | Identity and Access Management: framework for defining and enforcing user identities and permissions in cloud services or applications.                                                                                                                                                                                                                                                                                                                                                                |
-| IV                            | Initialization Vector: nonce value used in encryption to ensure unique ciphertexts and prevent reuse of keystreams.                                                                                                                                                                                                                                                                                                                                                                                   |
-| Jacoco                        | Java code coverage library that instruments code to collect execution metrics for reporting.                                                                                                                                                                                                                                                                                                                                                                                                           |
-| Jest                          | JavaScript testing framework for unit, integration, and snapshot tests in Node.js and front-end applications.                                                                                                                                                                                                                                                                                                                                                                                        |
-| JSON                          | JavaScript Object Notation: lightweight, text-based data interchange format widely used for APIs and configuration.                                                                                                                                                                                                                                                                                                                                                                                   |
-| JWT                           | JSON Web Token: compact, URL-safe token format encoding claims negotiated between parties, signed to verify authenticity.                                                                                                                                                                                                                                                                                                                                                                            |
-| KDF                           | Key Derivation Function: algorithm for generating cryptographic keys from a secret input (e.g., password), parameterized by memory, time, and parallelism costs.                                                                                                                                                                                                                                                                                                                                        |
-| Kubernetes                    | Open-source container orchestration platform automating deployment, scaling, and management of containerized applications across clusters.                                                                                                                                                                                                                                                                                                                                                            |
-| LRU Cache                     | Least Recently Used cache eviction strategy that discards the least recently accessed items when the cache reaches capacity.                                                                                                                                                                                                                                                                                                                                                                           |
-| Load Balancer                 | Network device or service distributing incoming traffic across multiple servers to optimize resource use and availability.                                                                                                                                                                                                                                                                                                                                                                            |
-| Microservices                 | Architectural style organizing an application as a collection of loosely coupled, independently deployable services.                                                                                                                                                                                                                                                                                                                                                                                 |
-| MFA                           | Multi-Factor Authentication: security process requiring multiple independent credentials (e.g., password, token, biometric) for verification.                                                                                                                                                                                                                                                                                                                                                          |
-| MVC                           | Model-View-Controller: software design pattern separating application logic (model), UI (view), and input handling (controller).                                                                                                                                                                                                                                                                                                                                                                      |
-| MVVM                          | Model-View-ViewModel: design pattern where the ViewModel exposes data and operations to the view, facilitating two-way data binding.                                                                                                                                                                                                                                                                                                                                                                  |
-| Next.js                       | React framework for server-side rendering, static site generation, and API routes, enhancing performance and SEO.                                                                                                                                                                                                                                                                                                                                                                                    |
-| NoSQL                         | Non-relational database models (e.g., document, key-value, graph) designed for flexible schemas and horizontal scalability.                                                                                                                                                                                                                                                                                                                                                                           |
-| OAuth2                        | Authorization framework enabling third-party applications to obtain limited access to user resources without exposing credentials.                                                                                                                                                                                                                                                                                                                                                                      |
-| OpenID Connect                | Authentication layer built on OAuth2 providing identity verification via JSON Web Tokens.                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ORM                           | Object-Relational Mapping: technique that converts data between incompatible systems (object-oriented languages and relational databases) using an abstraction layer.                                                                                                                                                                                                                                                                                                                                 |
-| OWASP                         | Open Web Application Security Project: nonprofit organization publishing guidelines and best practices for securing web applications.                                                                                                                                                                                                                                                                                                                                                                  |
-| Postman                       | API development tool for building, testing, and documenting HTTP requests and workflows.                                                                                                                                                                                                                                                                                                                                                                                                               |
-| PostgreSQL                    | Open-source, ACID-compliant relational database supporting advanced features such as JSONB, RLS, and full-text search.                                                                                                                                                                                                                                                                                                                                                                              |
-| Prometheus                    | Open-source metrics collection and alerting toolkit designed for monitoring distributed systems.                                                                                                                                                                                                                                                                                                                                                                                                       |
-| Prisma ORM                    | Type-safe database client and migration tool for Node.js and TypeScript, generating schema-driven query interfaces.                                                                                                                                                                                                                                                                                                                                                                                   |
-| RabbitMQ                      | Open-source message broker implementing AMQP for asynchronous communication between services.                                                                                                                                                                                                                                                                                                                                                                                                          |
-| RBAC                          | Role-Based Access Control: authorization model where permissions are assigned to roles and roles are assigned to users.                                                                                                                                                                                                                                                                                                                                                                              |
-| RLS                           | Row-Level Security: database feature enforcing access policies on individual rows based on session context or user identity.                                                                                                                                                                                                                                                                                                                                                                         |
-| REST                          | Representational State Transfer: architectural style for stateless, resource-oriented HTTP APIs using standard methods and URIs.                                                                                                                                                                                                                                                                                                                                                                      |
-| RTO / RPO                     | Recovery Time Objective: maximum tolerable downtime; Recovery Point Objective: maximum tolerable data loss, defined in disaster recovery planning.                                                                                                                                                                                                                                                                                                                                                     |
-| SAML                          | Security Assertion Markup Language: XML-based framework for exchanging authentication and authorization data between parties.                                                                                                                                                                                                                                                                                                                                                                         |
-| SaaS                          | Software as a Service: cloud delivery model providing hosted software over the internet on a subscription basis.                                                                                                                                                                                                                                                                                                                                                                                     |
-| SAST                          | Static Application Security Testing: analysis of application source code for security vulnerabilities without executing programs.                                                                                                                                                                                                                                                                                                                                                                       |
-| SCSS                          | Sassy CSS: CSS preprocessor extending CSS with variables, nesting, and mixins.                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| Scrum                         | Agile framework using fixed-length iterations (sprints), defined roles, and ceremonies to deliver incremental product enhancements.                                                                                                                                                                                                                                                                                                                                                                    |
-| SCSI                          | Small Computer System Interface: set of standards for connecting and transferring data between computers and peripheral devices.                                                                                                                                                                                                                                                                                                                                 |
-| SDS                           | Software-Defined Storage: storage architecture decoupling hardware from software, enabling centralized control and automated provisioning.                                                                                                                                                                                                                                                                                                                                 |
-| SFTP                          | Secure File Transfer Protocol: network protocol providing file access, transfer, and management over a secure SSH connection.                                                                                                                                                                                                                                                                                                                                                                      |
-| SHA-256                       | Secure Hash Algorithm 256-bit: cryptographic hash function producing fixed-size digest, used in data integrity and digital signatures.                                                                                                                                                                                                                                                                                                                                                                 |
-| SNI                           | Server Name Indication: TLS extension allowing multiple domains to share the same IP and certificate, enabling virtual hosting.                                                                                                                                                                                                                                                                                                                                 |
-| SNI                           | Server Name Indication: TLS extension to select appropriate certificate based on hostname during handshake.                                                                                                                                                                                                                                                                                                                                                                                         |
-| SRI                           | Subresource Integrity: browser security feature enabling verification that fetched resources (e.g., scripts, styles) have not been tampered with by checking hash digests.                                                                                                                                                                                                                                                                                                                            |
-| SSR                           | Server-Side Rendering: technique of rendering web application markup on the server before sending to client, improving performance and SEO.                                                                                                                                                                                                                                                                                                                                                           |
-| SSOT                          | Single Source of Truth: principle that data is stored in one authoritative location to ensure consistency.                                                                                                                                                                                                                                                                                                                                                                                            |
-| SSO                           | Single Sign-On: authentication scheme allowing users to access multiple applications with one set of credentials.                                                                                                                                                                                                                                                                                                                                                                                   |
-| SSL/TLS                       | Secure Sockets Layer / Transport Layer Security: cryptographic protocols securing data-in-transit with encryption, integrity, and authentication.                                                                                                                                                                                                                                                                                                                                                       |
-| Static Analysis               | Examination of code without execution to detect vulnerabilities, code quality issues, and style violations.                                                                                                                                                                                                                                                                                                                                                                                         |
-| Terraform                     | Declarative Infrastructure as Code tool for provisioning cloud and on-premise resources through version-controlled configurations.                                                                                                                                                                                                                                                                                                                                                                |
-| Throughput                    | Measure of the rate at which requests or transactions are processed by a system per unit time.                                                                                                                                                                                                                                                                                                                                                                                                      |
-| TTL                           | Time-To-Live: duration or number of hops after which data (e.g., DNS record, cache entry, token) expires or is discarded.                                                                                                                                                                                                                                                                                                                                                                          |
-| TOTP                          | Time-Based One-Time Password: algorithm generating short-lived numeric codes for MFA based on shared secret and current time.                                                                                                                                                                                                                                                                                                                                                                       |
-| UI/UX                         | User Interface / User Experience: disciplines focusing on interface design and overall experience to ensure usability and satisfaction.                                                                                                                                                                                                                                                                                                                                                            |
-| Vault                         | Encrypted storage container for user credentials, secure notes, or other sensitive data in a password manager.                                                                                                                                                                                                                                                                                                                                                                                     |
-| Veracode                      | Cloud-based platform for static and dynamic application security testing and remediation guidance.                                                                                                                                                                                                                                                                                                                                                                                                  |
-| WAF                           | Web Application Firewall: security layer inspecting and filtering HTTP traffic to block malicious requests and attacks.                                                                                                                                                                                                                                                                                                                                                                          |
-| WebSocket                     | Full-duplex communication protocol over a single TCP connection, enabling real-time data exchange between client and server.                                                                                                                                                                                                                                                                                                                                                                       |
-| WebCrypto API                 | Native browser API providing cryptographic primitives (e.g., hashing, encryption) for secure operations within web applications.                                                                                                                                                                                                                                                                                                                                                                   |
-| Webpack                       | Module bundler for JavaScript applications, managing dependencies and asset transformations for production deployment.                                                                                                                                                                                                                                                                                                                                                                           |
-| YAML                          | YAML Ain't Markup Language: human-readable data serialization format often used for configuration files.                                                                                                                                                                                                                                                                                                                                                                                          |
-| Zero-Knowledge Architecture   | System design ensuring servers store only ciphertext; encryption and decryption occur exclusively on the client, preserving user privacy and confidentiality.                                                                                                                                                                                                                                                                                                                                        |
+| Term                        | Definition                                                                                                                                                                          |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ACID                        | Atomicity, Consistency, Isolation, Durability: set of properties guaranteeing reliable transaction processing in relational databases.                                              |
+| Agile                       | Iterative software development methodology emphasizing adaptive planning, continuous feedback, and flexible responses to change (e.g., Scrum, Kanban).                              |
+| Argon2id                    | Memory-hard key derivation function combining Argon2i and Argon2d modes; resists both side-channel and brute-force attacks for deriving cryptographic keys from passwords.          |
+| API                         | Application Programming Interface: defined set of rules and protocols enabling communication between software components, often via HTTP/HTTPS in RESTful or GraphQL systems.       |
+| API Gateway                 | Service that routes client requests to backend services, enforcing security, rate limiting, and protocol translation.                                                               |
+| AWS ECS                     | Amazon Elastic Container Service: managed container orchestration service for running Docker containers at scale on AWS, supporting EC2 and Fargate launch types.                   |
+| Bcrypt                      | Password hashing algorithm based on the Blowfish cipher; includes adaptive work factor to increase computational cost over time.                                                    |
+| Cache                       | Temporary storage layer (in-memory or distributed) that speeds up data retrieval by storing frequently accessed data (e.g., Redis, Memcached).                                      |
+| CDN                         | Content Delivery Network: distributed network of servers caching and delivering static assets to users from geographically proximate locations to reduce latency.                   |
+| CI                          | Continuous Integration: practice of frequently merging developer changes into a shared repository, accompanied by automated tests and builds.                                       |
+| CI/CD                       | Continuous Integration / Continuous Deployment (or Delivery): automated workflows that build, test, and deploy applications to various environments upon code changes.              |
+| CMK                         | Customer Master Key: primary encryption key stored and managed by a KMS or HSM, used to encrypt data encryption keys.                                                               |
+| CORS                        | Cross-Origin Resource Sharing: browser mechanism controlled via HTTP headers to allow or restrict resource requests from different origins.                                         |
+| CRUD                        | Create, Read, Update, Delete: basic operations for persistent storage, mapped to HTTP methods POST, GET, PUT/PATCH, and DELETE.                                                     |
+| CSRF                        | Cross-Site Request Forgery: web vulnerability where unauthorized commands are transmitted from a user trusted by the application.                                                   |
+| CSP                         | Content Security Policy: HTTP header-based security standard that restricts resource loading sources to mitigate XSS and data injection attacks.                                    |
+| DevOps                      | Collaboration practice combining software development and IT operations to automate and streamline build, test, and deployment pipelines.                                           |
+| DevSecOps                   | Integration of security practices into the DevOps lifecycle, emphasizing automated security testing (SAST, DAST) and compliance checks in CI/CD.                                    |
+| DNS                         | Domain Name System: hierarchical naming system translating human-readable domain names to IP addresses.                                                                             |
+| Docker                      | Containerization platform packaging applications and dependencies into portable images for consistent deployment across environments.                                               |
+| DDoS                        | Distributed Denial of Service: attack that overwhelms a service with traffic from multiple sources, aiming to disrupt availability.                                                 |
+| E2EE                        | End-to-End Encryption: encryption model where only communicating endpoints can decrypt messages, preventing intermediaries (including servers) from accessing plaintext.            |
+| EC2                         | Amazon Elastic Compute Cloud: scalable virtual server instances in AWS for running applications.                                                                                    |
+| ELK                         | Elasticsearch, Logstash, Kibana: stack for log ingestion, storage, and visualization.                                                                                               |
+| Encryption Key              | Secret value derived or generated for cryptographic operations, used to encrypt and decrypt data; includes data encryption keys (DEK) and key encryption keys (KEK).                |
+| Eventual Consistency        | Consistency model where updates propagate asynchronously across replicas, leading to temporary discrepancies that converge over time.                                               |
+| GCM                         | Galois/Counter Mode: block cipher mode providing authenticated encryption, producing ciphertext and authentication tag.                                                             |
+| GraphQL                     | Query language and runtime for APIs, enabling clients to request exactly the data they need in a single request.                                                                    |
+| HMAC                        | Hash-Based Message Authentication Code: mechanism that uses a secret key and hash function to verify message integrity and authenticity.                                            |
+| HSM                         | Hardware Security Module: dedicated hardware device or cloud service for secure generation, storage, and usage of cryptographic keys without exposing them to the host environment. |
+| HTTPS                       | HTTP over TLS/SSL: protocol securing HTTP requests and responses to prevent eavesdropping and tampering.                                                                            |
+| HTTP/2                      | Updated version of HTTP providing multiplexed streams, header compression (HPACK), and server push to improve performance.                                                          |
+| IaC                         | Infrastructure as Code: practice of managing infrastructure provisioning and configuration through declarative code definitions (e.g., Terraform).                                  |
+| IAM                         | Identity and Access Management: framework for defining and enforcing user identities and permissions in cloud services or applications.                                             |
+| IV                          | Initialization Vector: nonce value used in encryption to ensure unique ciphertexts and prevent reuse of keystreams.                                                                 |
+| Jacoco                      | Java code coverage library that instruments code to collect execution metrics for reporting.                                                                                        |
+| Jest                        | JavaScript testing framework for unit, integration, and snapshot tests in Node.js and front-end applications.                                                                       |
+| JSON                        | JavaScript Object Notation: lightweight, text-based data interchange format widely used for APIs and configuration.                                                                 |
+| JWT                         | JSON Web Token: compact, URL-safe token format encoding claims negotiated between parties, signed to verify authenticity.                                                           |
+| KDF                         | Key Derivation Function: algorithm for generating cryptographic keys from a secret input (e.g., password), parameterized by memory, time, and parallelism costs.                    |
+| Kubernetes                  | Open-source container orchestration platform automating deployment, scaling, and management of containerized applications across clusters.                                          |
+| LRU Cache                   | Least Recently Used cache eviction strategy that discards the least recently accessed items when the cache reaches capacity.                                                        |
+| Load Balancer               | Network device or service distributing incoming traffic across multiple servers to optimize resource use and availability.                                                          |
+| Microservices               | Architectural style organizing an application as a collection of loosely coupled, independently deployable services.                                                                |
+| MFA                         | Multi-Factor Authentication: security process requiring multiple independent credentials (e.g., password, token, biometric) for verification.                                       |
+| MVC                         | Model-View-Controller: software design pattern separating application logic (model), UI (view), and input handling (controller).                                                    |
+| MVVM                        | Model-View-ViewModel: design pattern where the ViewModel exposes data and operations to the view, facilitating two-way data binding.                                                |
+| Next.js                     | React framework for server-side rendering, static site generation, and API routes, enhancing performance and SEO.                                                                   |
+| NoSQL                       | Non-relational database models (e.g., document, key-value, graph) designed for flexible schemas and horizontal scalability.                                                         |
+| OAuth2                      | Authorization framework enabling third-party applications to obtain limited access to user resources without exposing credentials.                                                  |
+| OpenID Connect              | Authentication layer built on OAuth2 providing identity verification via JSON Web Tokens.                                                                                           |
+| ORM                         | Object-Relational Mapping: technique that converts data between incompatible systems (object-oriented languages and relational databases) using an abstraction layer.               |
+| OWASP                       | Open Web Application Security Project: nonprofit organization publishing guidelines and best practices for securing web applications.                                               |
+| Postman                     | API development tool for building, testing, and documenting HTTP requests and workflows.                                                                                            |
+| PostgreSQL                  | Open-source, ACID-compliant relational database supporting advanced features such as JSONB, RLS, and full-text search.                                                              |
+| Prometheus                  | Open-source metrics collection and alerting toolkit designed for monitoring distributed systems.                                                                                    |
+| Prisma ORM                  | Type-safe database client and migration tool for Node.js and TypeScript, generating schema-driven query interfaces.                                                                 |
+| RabbitMQ                    | Open-source message broker implementing AMQP for asynchronous communication between services.                                                                                       |
+| RBAC                        | Role-Based Access Control: authorization model where permissions are assigned to roles and roles are assigned to users.                                                             |
+| RLS                         | Row-Level Security: database feature enforcing access policies on individual rows based on session context or user identity.                                                        |
+| REST                        | Representational State Transfer: architectural style for stateless, resource-oriented HTTP APIs using standard methods and URIs.                                                    |
+| RTO / RPO                   | Recovery Time Objective: maximum tolerable downtime; Recovery Point Objective: maximum tolerable data loss, defined in disaster recovery planning.                                  |
+| SAML                        | Security Assertion Markup Language: XML-based framework for exchanging authentication and authorization data between parties.                                                       |
+| SaaS                        | Software as a Service: cloud delivery model providing hosted software over the internet on a subscription basis.                                                                    |
+| SAST                        | Static Application Security Testing: analysis of application source code for security vulnerabilities without executing programs.                                                   |
+| SCSS                        | Sassy CSS: CSS preprocessor extending CSS with variables, nesting, and mixins.                                                                                                      |
+| Scrum                       | Agile framework using fixed-length iterations (sprints), defined roles, and ceremonies to deliver incremental product enhancements.                                                 |
+| SCSI                        | Small Computer System Interface: set of standards for connecting and transferring data between computers and peripheral devices.                                                    |
+| SDS                         | Software-Defined Storage: storage architecture decoupling hardware from software, enabling centralized control and automated provisioning.                                          |
+| SFTP                        | Secure File Transfer Protocol: network protocol providing file access, transfer, and management over a secure SSH connection.                                                       |
+| SHA-256                     | Secure Hash Algorithm 256-bit: cryptographic hash function producing fixed-size digest, used in data integrity and digital signatures.                                              |
+| SNI                         | Server Name Indication: TLS extension allowing multiple domains to share the same IP and certificate, enabling virtual hosting.                                                     |
+| SNI                         | Server Name Indication: TLS extension to select appropriate certificate based on hostname during handshake.                                                                         |
+| SRI                         | Subresource Integrity: browser security feature enabling verification that fetched resources (e.g., scripts, styles) have not been tampered with by checking hash digests.          |
+| SSR                         | Server-Side Rendering: technique of rendering web application markup on the server before sending to client, improving performance and SEO.                                         |
+| SSOT                        | Single Source of Truth: principle that data is stored in one authoritative location to ensure consistency.                                                                          |
+| SSO                         | Single Sign-On: authentication scheme allowing users to access multiple applications with one set of credentials.                                                                   |
+| SSL/TLS                     | Secure Sockets Layer / Transport Layer Security: cryptographic protocols securing data-in-transit with encryption, integrity, and authentication.                                   |
+| Static Analysis             | Examination of code without execution to detect vulnerabilities, code quality issues, and style violations.                                                                         |
+| Terraform                   | Declarative Infrastructure as Code tool for provisioning cloud and on-premise resources through version-controlled configurations.                                                  |
+| Throughput                  | Measure of the rate at which requests or transactions are processed by a system per unit time.                                                                                      |
+| TTL                         | Time-To-Live: duration or number of hops after which data (e.g., DNS record, cache entry, token) expires or is discarded.                                                           |
+| TOTP                        | Time-Based One-Time Password: algorithm generating short-lived numeric codes for MFA based on shared secret and current time.                                                       |
+| UI/UX                       | User Interface / User Experience: disciplines focusing on interface design and overall experience to ensure usability and satisfaction.                                             |
+| Vault                       | Encrypted storage container for user credentials, secure notes, or other sensitive data in a password manager.                                                                      |
+| Veracode                    | Cloud-based platform for static and dynamic application security testing and remediation guidance.                                                                                  |
+| WAF                         | Web Application Firewall: security layer inspecting and filtering HTTP traffic to block malicious requests and attacks.                                                             |
+| WebSocket                   | Full-duplex communication protocol over a single TCP connection, enabling real-time data exchange between client and server.                                                        |
+| WebCrypto API               | Native browser API providing cryptographic primitives (e.g., hashing, encryption) for secure operations within web applications.                                                    |
+| Webpack                     | Module bundler for JavaScript applications, managing dependencies and asset transformations for production deployment.                                                              |
+| YAML                        | YAML Ain't Markup Language: human-readable data serialization format often used for configuration files.                                                                            |
+| Zero-Knowledge Architecture | System design ensuring servers store only ciphertext; encryption and decryption occur exclusively on the client, preserving user privacy and confidentiality.                       |
 
 ---
 
